@@ -1,0 +1,11 @@
+.git
+.env
+tmp
+backend/.env
+backend/vendor
+backend/database/*.sqlite
+frontend/.env*
+frontend/.next
+frontend/node_modules
+**/.DS_Store
+

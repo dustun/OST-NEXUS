@@ -1,0 +1,17 @@
+{
+	auto_https off
+	admin off
+}
+
+:{$APP_PORT:8090} {
+	encode zstd gzip
+
+	@backend path /api/* /admin* /livewire* /css/filament/* /js/filament/* /fonts/filament/* /storage/*
+	handle @backend {
+		reverse_proxy 127.0.0.1:{$BACKEND_PORT:8100}
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:{$FRONTEND_PORT:3100}
+	}
+}

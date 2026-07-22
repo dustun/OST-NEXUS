@@ -1,0 +1,132 @@
+version: "3"
+
+silent: true
+dotenv: [".env"]
+
+vars:
+  BACKEND_DEV_PORT: '{{default "8100" .BACKEND_PORT}}'
+  FRONTEND_DEV_PORT: '{{default "3100" .FRONTEND_PORT}}'
+
+tasks:
+  default:
+    desc: Show available project commands
+    cmds:
+      - task --list
+
+  setup:
+    desc: Install dependencies, start infrastructure, and migrate the database
+    cmds:
+      - test -f .env || cp .env.example .env
+      - test -f backend/.env || cp backend/.env.example backend/.env
+      - docker compose pull
+      - docker compose up -d
+      - task: backend:setup
+      - task: frontend:setup
+
+  dev:
+    desc: Start Caddy, PostgreSQL, Laravel, and Next.js together
+    deps:
+      - task: infra:up
+      - task: caddy:serve
+      - task: backend:serve
+      - task: frontend:serve
+
+  up:
+    desc: Start PostgreSQL in the background
+    cmds:
+      - docker compose up -d
+
+  down:
+    desc: Stop the development infrastructure without deleting data
+    cmds:
+      - docker compose down
+
+  ps:
+    desc: Show infrastructure service state
+    cmds:
+      - docker compose ps
+
+  logs:
+    desc: Follow PostgreSQL logs
+    cmds:
+      - docker compose logs -f --tail=200
+
+  migrate:
+    desc: Run Laravel database migrations
+    dir: backend
+    env: &database
+      APP_NAME: OST NEXUS
+      APP_URL: http://localhost:8090
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 54320
+      DB_DATABASE: ost_nexus
+      DB_USERNAME: ost_nexus
+      DB_PASSWORD: ost_nexus_local
+    cmds:
+      - php artisan migrate
+
+  test:
+    desc: Run backend tests and frontend checks
+    cmds:
+      - task: backend:test
+      - task: frontend:check
+
+  backend:test:
+    desc: Run the Laravel test suite
+    dir: backend
+    cmds:
+      - php artisan test
+
+  backend:format:
+    desc: Format backend PHP code
+    dir: backend
+    cmds:
+      - ./vendor/bin/pint
+
+  frontend:check:
+    desc: Run frontend lint and production build
+    dir: frontend
+    cmds:
+      - npm run lint
+      - npm run build
+
+  infra:up:
+    internal: true
+    cmds:
+      - docker compose up -d
+
+  caddy:serve:
+    internal: true
+    cmds:
+      - caddy run --config docker/caddy/Caddyfile --adapter caddyfile
+
+  backend:setup:
+    internal: true
+    dir: backend
+    env: *database
+    cmds:
+      - composer install --no-interaction
+      - grep -q '^APP_KEY=base64:' .env || php artisan key:generate --force
+      - php artisan migrate --force
+
+  frontend:setup:
+    internal: true
+    dir: frontend
+    cmds:
+      - npm ci
+
+  backend:serve:
+    internal: true
+    dir: backend
+    env: *database
+    cmds:
+      - php artisan serve --host=127.0.0.1 --port={{.BACKEND_DEV_PORT}}
+
+  frontend:serve:
+    internal: true
+    dir: frontend
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    cmds:
+      - npm run dev -- --hostname 127.0.0.1 --port {{.FRONTEND_DEV_PORT}}
