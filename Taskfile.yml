@@ -4,18 +4,40 @@ silent: true
 dotenv: [".env"]
 
 vars:
+  APP_HTTP_PORT: '{{default "8090" .APP_PORT}}'
   BACKEND_DEV_PORT: '{{default "8100" .BACKEND_PORT}}'
   FRONTEND_DEV_PORT: '{{default "3100" .FRONTEND_PORT}}'
+  DATABASE_HOST_PORT: '{{default "54320" .DB_FORWARD_PORT}}'
+  DATABASE_NAME: '{{default "ost_nexus" .POSTGRES_DB}}'
+  DATABASE_USER: '{{default "ost_nexus" .POSTGRES_USER}}'
+  DATABASE_PASSWORD: '{{default "ost_nexus_local" .POSTGRES_PASSWORD}}'
 
 tasks:
   default:
-    desc: Show available project commands
+    desc: Показать список доступных команд
     cmds:
       - task --list
 
-  setup:
-    desc: Install dependencies, start infrastructure, and migrate the database
+  help:
+    desc: Показать список доступных команд
     cmds:
+      - task --list
+
+  doctor:
+    desc: Проверить наличие Docker, Caddy, PHP, Composer, Node.js и npm
+    cmds:
+      - docker --version
+      - docker compose version
+      - caddy version
+      - php --version
+      - composer --version
+      - node --version
+      - npm --version
+
+  setup:
+    desc: Первый запуск — создать env-файлы, установить зависимости и выполнить миграции
+    cmds:
+      - task: doctor
       - test -f .env || cp .env.example .env
       - test -f backend/.env || cp backend/.env.example backend/.env
       - docker compose pull
@@ -24,7 +46,12 @@ tasks:
       - task: frontend:setup
 
   dev:
-    desc: Start Caddy, PostgreSQL, Laravel, and Next.js together
+    desc: Запустить PostgreSQL, Caddy, Laravel и Next.js вместе в режиме разработки
+    preconditions:
+      - sh: test -f .env
+        msg: Сначала выполните task setup — отсутствует корневой файл .env
+      - sh: test -f backend/.env
+        msg: Сначала выполните task setup — отсутствует backend/.env
     deps:
       - task: infra:up
       - task: caddy:serve
@@ -32,60 +59,112 @@ tasks:
       - task: frontend:serve
 
   up:
-    desc: Start PostgreSQL in the background
+    desc: Запустить PostgreSQL в фоновом режиме
     cmds:
       - docker compose up -d
 
   down:
-    desc: Stop the development infrastructure without deleting data
+    aliases: [stop]
+    desc: Остановить инфраструктуру, сохранив данные PostgreSQL
     cmds:
       - docker compose down
 
-  ps:
-    desc: Show infrastructure service state
+  restart:
+    desc: Перезапустить PostgreSQL
+    cmds:
+      - docker compose restart db
+
+  status:
+    aliases: [ps]
+    desc: Показать состояние контейнеров проекта
     cmds:
       - docker compose ps
 
   logs:
-    desc: Follow PostgreSQL logs
+    desc: Показывать журнал PostgreSQL в реальном времени
     cmds:
-      - docker compose logs -f --tail=200
+      - docker compose logs -f --tail=200 db
 
   migrate:
-    desc: Run Laravel database migrations
+    desc: Применить новые миграции базы данных
     dir: backend
     env: &database
       APP_NAME: OST NEXUS
-      APP_URL: http://localhost:8090
+      APP_URL: http://localhost:{{.APP_HTTP_PORT}}
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
-      DB_PORT: 54320
-      DB_DATABASE: ost_nexus
-      DB_USERNAME: ost_nexus
-      DB_PASSWORD: ost_nexus_local
+      DB_PORT: "{{.DATABASE_HOST_PORT}}"
+      DB_DATABASE: "{{.DATABASE_NAME}}"
+      DB_USERNAME: "{{.DATABASE_USER}}"
+      DB_PASSWORD: "{{.DATABASE_PASSWORD}}"
     cmds:
       - php artisan migrate
 
-  test:
-    desc: Run backend tests and frontend checks
+  migrate:rollback:
+    desc: Откатить последнюю группу миграций
+    dir: backend
+    env: *database
     cmds:
-      - task: backend:test
+      - php artisan migrate:rollback
+
+  db:seed:
+    desc: Загрузить тестовые и справочные данные
+    dir: backend
+    env: *database
+    cmds:
+      - php artisan db:seed
+
+  test:
+    desc: Выполнить все проверки backend, frontend и конфигурации окружения
+    cmds:
+      - task: config:check
+      - task: backend:check
       - task: frontend:check
 
+  format:
+    desc: Отформатировать PHP-код с помощью Laravel Pint
+    cmds:
+      - task: backend:format
+
+  config:check:
+    desc: Проверить конфигурации Docker Compose и Caddy
+    cmds:
+      - docker compose config --quiet
+      - caddy validate --config docker/caddy/Caddyfile --adapter caddyfile
+
   backend:test:
-    desc: Run the Laravel test suite
+    desc: Запустить тесты Laravel
     dir: backend
     cmds:
       - php artisan test
 
   backend:format:
-    desc: Format backend PHP code
+    desc: Отформатировать PHP-код
     dir: backend
     cmds:
       - ./vendor/bin/pint
 
+  backend:check:
+    desc: Проверить тесты и стиль PHP-кода без изменения файлов
+    dir: backend
+    cmds:
+      - php artisan test
+      - ./vendor/bin/pint --test
+
+  frontend:lint:
+    desc: Проверить TypeScript и React с помощью ESLint
+    dir: frontend
+    cmds:
+      - npm run lint
+
+  frontend:build:
+    desc: Собрать production-версию frontend
+    dir: frontend
+    cmds:
+      - npm run build
+
   frontend:check:
-    desc: Run frontend lint and production build
+    desc: Проверить frontend и выполнить production-сборку
     dir: frontend
     cmds:
       - npm run lint

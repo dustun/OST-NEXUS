@@ -1,38 +1,38 @@
-# Delivery roadmap
+# Дорожная карта реализации
 
-Each phase ends with a testable vertical slice. Work branches start from `dev` and remain narrow enough to review.
+Каждый этап завершается проверяемым вертикальным срезом. Рабочие ветки создаются от **dev** и остаются достаточно небольшими для полноценного ревью.
 
-## 0. Foundation - current
+## 0. Техническая основа — текущий этап
 
-- monorepo and Git workflow;
-- Next.js and Laravel applications;
-- Filament panel installation;
-- PostgreSQL, Caddy, Docker Compose, and Taskfile;
-- API response convention and health endpoint;
-- initial UI tokens, responsive shell, and reduced-motion fallback.
+- монорепозиторий и Git-процесс;
+- Next.js и Laravel;
+- DDD для backend и FSD для frontend;
+- админ-панель Filament;
+- PostgreSQL, Caddy, Docker Compose и Taskfile;
+- формат REST-ответов и health endpoint;
+- начальные визуальные токены, адаптивная оболочка и reduced-motion режим.
 
-## 1. First vertical slice
+## 1. Первый вертикальный срез
 
-Acceptance dataset: one game, three tracks, one composer, two moods, two scene types, and one YouTube source per track.
+Минимальный набор данных: одна игра, три трека, один композитор, два настроения, два типа сцен и один YouTube-источник для каждого трека.
 
-Expected user path: open a published game, play any track in a persistent visible player, navigate without stopping playback, favorite a track, reload, and recover the local state.
+Путь пользователя: открыть опубликованную игру, включить трек в постоянном видимом плеере, перейти на другую страницу без остановки, добавить трек в избранное, перезагрузить приложение и восстановить локальное состояние.
 
-Suggested branches:
+Предлагаемые ветки:
 
-- `feature/catalog-schema` - PostgreSQL migrations, constraints, factories, and seed data;
-- `feature/catalog-admin` - Filament resources and editorial workflow;
-- `feature/catalog-api` - public read-only game and track endpoints;
-- `feature/frontend-shell` - layouts, tokens, navigation, and catalog API client;
-- `feature/global-player` - visible YouTube IFrame player and persistent queue;
-- `feature/local-favorites` - Dexie storage, favorites, and recovery.
+- **feature/catalog-schema** — доменная модель Catalog, миграции, ограничения, фабрики и начальные данные;
+- **feature/catalog-admin** — ресурсы Filament и редакторский процесс;
+- **feature/catalog-api** — публичные read-only маршруты игр и треков;
+- **feature/frontend-catalog** — FSD-сущности, каталог, навигация и API-клиент;
+- **feature/global-player** — видимый YouTube IFrame Player и постоянная очередь;
+- **feature/local-favorites** — Dexie, избранное и восстановление состояния.
 
-## 2. MVP increments
+## 2. Последующие части MVP
 
-1. Personalization: local history, queue, settings, and spoiler-safe mode.
-2. Radio: filters, scoring, controlled randomness, and dynamic curves.
-3. Share and social: anonymous public playlists and Filament-managed links.
-4. Motion and 3D: Motion interactions, then one optimized Nexus Core scene.
-5. Quality: accessibility, SEO, performance budgets, provider compliance, and source monitoring.
+1. Персонализация: локальная история, очередь, настройки и защита от спойлеров.
+2. Радио: фильтры, оценка треков, управляемая случайность и динамические кривые.
+3. Публикация: анонимные общедоступные плейлисты и управляемые через Filament ссылки.
+4. Движение и 3D: Motion-взаимодействия, затем одна оптимизированная сцена Nexus Core.
+5. Качество: доступность, SEO, бюджеты производительности, соблюдение правил провайдеров и мониторинг источников.
 
-Registration, social feeds, native apps, user uploads, audio extraction, and ML recommendations are not part of the MVP.
-
+Регистрация слушателей, социальная лента, нативные приложения, пользовательские загрузки, извлечение аудио и ML-рекомендации не входят в MVP.

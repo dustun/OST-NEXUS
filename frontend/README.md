@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend OST NEXUS
 
-## Getting Started
+Публичное приложение построено на Next.js, React, TypeScript и Tailwind CSS. Структура следует Feature-Sliced Design.
 
-First, run the development server:
+## Слои
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **app** — App Router, глобальная конфигурация и композиция маршрутов;
+- **widgets** — крупные самостоятельные блоки страницы;
+- **features** — пользовательские действия;
+- **entities** — клиентское представление бизнес-сущностей;
+- **shared** — общие компоненты, конфигурация, API-клиент и утилиты.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Разрешённое направление импортов: **app → widgets → features → entities → shared**. Срезы публикуют внешний API через **index.ts**; прямые импорты во внутренние файлы соседнего среза запрещены.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+В Next.js роль FSD-слоя страниц выполняет **app**, чтобы не создавать конфликтующий каталог **pages**.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Подробные правила находятся в [описании архитектуры](../docs/architecture.md).
 
-## Learn More
+## Команды
 
-To learn more about Next.js, take a look at the following resources:
+Команды выполняются из корня монорепозитория:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+~~~bash
+task setup
+task dev
+task frontend:lint
+task frontend:build
+task frontend:check
+~~~
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+После запуска frontend доступен через Caddy по адресу <http://localhost:8090>. Прямой dev-сервер Next.js слушает только **127.0.0.1:3100**.

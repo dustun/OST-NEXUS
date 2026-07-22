@@ -1,53 +1,81 @@
 # OST NEXUS
 
-OST NEXUS is a game soundtrack encyclopedia, an interactive radio, and a visual musical world. This repository is the shared monorepo for the public Next.js application, the Laravel REST API, the Filament administration panel, and local infrastructure.
+OST NEXUS — энциклопедия игровых саундтреков, интерактивное радио и визуальный музыкальный мир. Проект организован как монорепозиторий: публичный frontend, REST API, админ-панель и локальная инфраструктура изменяются и проверяются вместе.
 
-## Repository layout
+## Технологии и архитектура
 
-```text
-frontend/       Next.js, React, TypeScript, Tailwind CSS
-backend/        Laravel REST API and Filament
-docker/         Caddy and application images
-docs/           Architecture decisions and delivery roadmap
-compose.yml     Local development stack
-Taskfile.yml    Single command entry point
-```
+- frontend: Next.js, React, TypeScript и Tailwind CSS; архитектура Feature-Sliced Design;
+- backend: Laravel REST API и Filament; предметно-ориентированная архитектура Domain-Driven Design;
+- данные: PostgreSQL;
+- единая точка входа: Caddy;
+- управление окружением: Taskfile и Docker Compose.
 
-## Quick start
+~~~text
+frontend/       Публичное приложение по правилам FSD
+backend/        REST API и Filament по правилам DDD
+docker/         Конфигурация Caddy
+docs/           Архитектура и план реализации
+compose.yml     Контейнер PostgreSQL
+Taskfile.yml    Единый интерфейс команд проекта
+~~~
 
-Requirements: Docker Desktop, [Task](https://taskfile.dev/), [Caddy](https://caddyserver.com/docs/install), Node.js 20.9+, PHP 8.3+, and Composer.
+Подробные правила находятся в [описании архитектуры](docs/architecture.md).
 
-```bash
+## Первый запуск
+
+Необходимы Docker Desktop, [Task](https://taskfile.dev/), [Caddy](https://caddyserver.com/docs/install), Node.js 20.9 или новее, PHP 8.3 или новее и Composer.
+
+~~~bash
 task setup
 task dev
-```
+~~~
 
-Then open:
+**task setup** проверяет инструменты, создаёт локальные env-файлы, запускает PostgreSQL, устанавливает PHP- и npm-зависимости и выполняет миграции. Команда нужна после клонирования проекта или существенного обновления зависимостей.
 
-- application: <http://localhost:8090>
-- API health: <http://localhost:8090/api/v1/health>
-- Filament: <http://localhost:8090/admin>
-- PostgreSQL from the host: `localhost:54320`
+**task dev** запускает Caddy, Laravel и Next.js в текущем терминале, а PostgreSQL — в Docker. Для остановки процессов разработки нажмите **Ctrl+C**, затем при необходимости выполните **task down**.
 
-PostgreSQL runs in Docker. Task starts Caddy, Laravel, and Next.js as local development processes so file watching stays fast on macOS, Linux, and Windows/WSL.
+После запуска доступны:
 
-Run all checks with `task test`. Use `task --list` to see the full command set.
+- приложение: <http://localhost:8090>;
+- проверка API: <http://localhost:8090/api/v1/health>;
+- админ-панель Filament: <http://localhost:8090/admin>;
+- PostgreSQL с хоста: **localhost:54320**.
 
-## Git workflow
+## Основные команды
 
-- `main` - release-ready history;
-- `dev` - integration branch for completed work;
-- `feature/*`, `fix/*`, `chore/*` - short-lived branches created from `dev` and merged back through review.
+| Команда | Назначение |
+|---|---|
+| **task** или **task help** | показать все публичные команды |
+| **task doctor** | проверить установленные инструменты и их версии |
+| **task setup** | полностью подготовить проект после клонирования |
+| **task dev** | запустить всё приложение для разработки |
+| **task up** | запустить только PostgreSQL |
+| **task down** | остановить контейнеры без удаления данных |
+| **task status** | показать состояние контейнеров |
+| **task logs** | следить за журналом PostgreSQL |
+| **task migrate** | применить миграции |
+| **task migrate:rollback** | откатить последнюю группу миграций |
+| **task db:seed** | загрузить подготовленные данные |
+| **task test** | запустить все тесты и проверки проекта |
+| **task format** | отформатировать PHP-код |
+| **task frontend:lint** | проверить frontend с помощью ESLint |
+| **task frontend:build** | выполнить production-сборку frontend |
 
-The initial Foundation work is developed on `feature/foundation`, based on `dev`.
+Полный актуальный список всегда можно получить командой **task --list**.
 
-## Product constraints
+## Работа с Git
 
-- listeners do not need an account in the MVP;
-- Laravel and PostgreSQL are the source of truth, and Filament is the only admin panel;
-- tracks are provider-independent entities; a YouTube video is one playback source;
-- YouTube playback must use a visible official embedded player;
-- imported content remains a draft until editorial review;
-- Motion and 3D must degrade gracefully and respect reduced-motion settings.
+- **main** — готовая к выпуску история;
+- **dev** — интеграционная ветка завершённых изменений;
+- ветки с префиксами **feature/**, **fix/** и **chore/** — короткоживущие ветки, создаваемые от **dev**.
 
-See [architecture](docs/architecture.md) and [roadmap](docs/roadmap.md) for the implementation boundaries derived from specification v1.2.
+Текущая основа разрабатывается в **feature/foundation**. План следующих вертикальных срезов описан в [дорожной карте](docs/roadmap.md).
+
+## Ограничения MVP
+
+- слушателю не нужна учётная запись;
+- Laravel и PostgreSQL являются единственным источником истины, Filament — единственной админ-панелью;
+- трек не зависит от конкретного провайдера, а YouTube-видео является одним из источников воспроизведения;
+- официальный YouTube-плеер всегда остаётся видимым;
+- импортированный контент публикуется только после редакторской проверки;
+- анимации и 3D учитывают **prefers-reduced-motion** и имеют облегчённый режим.

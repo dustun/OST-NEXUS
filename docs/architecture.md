@@ -1,68 +1,121 @@
-# Architecture
+# Архитектура OST NEXUS
 
-## Decision record
+## Общая схема
 
-OST NEXUS uses one Git monorepo. Frontend and backend are independently buildable applications, but a single Taskfile and Docker Compose project control the local environment. This keeps API and UI changes atomic while preserving clear service boundaries.
+OST NEXUS использует один Git-монорепозиторий. Frontend и backend собираются независимо, но Taskfile и Docker Compose дают разработчику единый интерфейс запуска. Это позволяет выпускать согласованные изменения API и интерфейса, не смешивая ответственность приложений.
 
-## Runtime topology
-
-```text
-Browser :8090
+~~~text
+Браузер :8090
     |
   Caddy
-    |-- /api/*, /admin*, Filament assets --> Laravel :8100
-    `-- everything else -----------------> Next.js :3100
+    |-- /api/*, /admin*, ресурсы Filament --> Laravel :8100
+    └-- остальные запросы -----------------> Next.js :3100
 
 Laravel --> PostgreSQL :5432
-```
+~~~
 
-PostgreSQL runs in Docker. Task starts Caddy, Next.js, and Laravel as host development processes. This avoids slow cross-platform dependency volumes while preserving one command (`task dev`) and a same-origin surface. PostgreSQL is the only application database. Redis is intentionally deferred until a measured queue or cache need appears.
+PostgreSQL работает в Docker. Caddy, Next.js и Laravel запускаются локально командой **task dev**, поэтому hot reload остаётся быстрым на macOS, Linux и Windows/WSL. Redis появится только после измеримой потребности в очередях или кэше.
 
-## Application boundaries
+## Backend: Domain-Driven Design
 
-Frontend modules will follow the specification vocabulary:
+Backend строится по принципам Domain-Driven Design. Бизнес-правила принадлежат предметной области и не зависят от Laravel, HTTP, Filament или PostgreSQL.
 
-- entities: game, track, composer, station;
-- features: search, queue, favorites, sharing, spoiler mode;
-- widgets: header, player, Nexus Core, station grid, footer;
-- shared: API client, UI primitives, motion tokens, storage adapters.
+~~~text
+backend/app/
+├── Domain/          Сущности, value objects, агрегаты, доменные события
+├── Application/     Сценарии использования, команды, запросы, DTO и порты
+├── Infrastructure/  Eloquent, PostgreSQL, провайдеры, часы и внешние API
+├── Presentation/    HTTP-контроллеры, сериализация и точки входа
+├── Providers/       Связывание интерфейсов с реализациями Laravel
+└── Models/          Временные framework-модели вне доменного ядра
+~~~
 
-Backend domains will be introduced as vertical slices:
+Правило зависимостей:
 
-- Catalog;
-- Playback Source;
-- Radio;
-- Collection and Shared Playlist;
-- Content and Social Link;
-- Provider Integration;
-- Anonymous Analytics;
-- Admin.
+~~~text
+Presentation --> Application --> Domain
+                       ^
+                       |
+                Infrastructure
+~~~
 
-Laravel Eloquent models and PostgreSQL remain the source of truth. Filament uses the same models and never becomes a separate backend. The Next.js client only consumes versioned Laravel REST endpoints.
+- **Domain** не импортирует Laravel и инфраструктурные классы;
+- **Application** координирует сценарий, но не знает деталей HTTP и хранения;
+- **Infrastructure** реализует объявленные приложением порты;
+- **Presentation** преобразует HTTP-запрос в команду или запрос и формирует ответ;
+- Filament вызывает те же прикладные сценарии и не содержит отдельной бизнес-логики.
 
-## API conventions
+Текущий **GET /api/v1/health** уже проходит через эти слои: контроллер находится в **Presentation**, обработчик запроса и DTO — в **Application**, статус сервиса — в **Domain**, системные часы — в **Infrastructure**.
 
-Public endpoints use the `/api/v1` prefix and return a stable envelope:
+Планируемые ограниченные контексты:
 
-```json
+- Catalog — игры, треки, альбомы, композиторы, настроения и типы сцен;
+- Playback — источники воспроизведения и правила провайдеров;
+- Radio — станции, фильтрация, оценка и управляемая случайность;
+- Collection — локальные коллекции и публичные плейлисты;
+- Content — редакционные материалы и социальные ссылки;
+- Integration — импорт и синхронизация с провайдерами;
+- Analytics — анонимные продуктовые события;
+- Administration — редакторские сценарии Filament.
+
+Первым полноценным контекстом станет **Catalog**. Его модели Eloquent будут находиться в Infrastructure, а доменные агрегаты не будут наследоваться от **Model**.
+
+## Frontend: Feature-Sliced Design
+
+Frontend следует Feature-Sliced Design и правилу однонаправленных импортов: верхний слой может использовать нижний, но нижний не знает о верхнем.
+
+~~~text
+frontend/src/
+├── app/       Next.js App Router, глобальные стили и сборка страницы
+├── widgets/   Крупные самостоятельные блоки интерфейса
+├── features/  Пользовательские действия и законченные сценарии
+├── entities/  Представление бизнес-сущностей
+└── shared/    UI-примитивы, API-клиент, конфигурация и утилиты
+~~~
+
+Допустимое направление импортов:
+
+~~~text
+app --> widgets --> features --> entities --> shared
+~~~
+
+Каталоги **features** и **entities** добавляются вместе с первой бизнес-функциональностью, а не заполняются пустыми абстракциями. Сейчас **app/page.tsx** только собирает FSD-виджеты, маршруты вынесены в **shared/config**.
+
+Отдельный каталог **pages** не используется, потому что в Next.js он имеет специальное значение и конфликтует с App Router. Роль слоя композиции страниц выполняют route-файлы **app**; бизнес-логика в них запрещена.
+
+Каждый значимый FSD-срез может содержать:
+
+- **ui/** — компоненты;
+- **model/** — состояние и бизнес-правила клиента;
+- **api/** — запросы конкретного среза;
+- **lib/** — внутренние вспомогательные функции;
+- **index.ts** — публичный API среза.
+
+Импорты во внутренние файлы другого среза запрещены: внешний код использует только его публичный API.
+
+## Соглашения REST API
+
+Публичные маршруты имеют префикс **/api/v1** и возвращают стабильную оболочку:
+
+~~~json
 {
   "data": {},
   "meta": {},
   "errors": []
 }
-```
+~~~
 
-The first endpoint is `GET /api/v1/health`. Catalog reads are the next API increment.
+Первый маршрут — **GET /api/v1/health**. Следующим API-срезом станут публичные запросы каталога.
 
-## Local persistence
+## Локальные данные слушателя
 
-Browser preferences such as theme, volume, and spoiler mode belong in `localStorage`. Favorites, history, and the persistent queue will use IndexedDB through Dexie. Sensitive data and hidden cross-device profiling are explicitly out of scope.
+Тема, громкость и режим защиты от спойлеров хранятся в **localStorage**. Избранное, история и постоянная очередь будут храниться в IndexedDB через Dexie. Скрытое межсайтовое профилирование и чувствительные данные не входят в проект.
 
-## Performance and compliance guardrails
+## Ограничения качества и совместимости
 
-- load 3D only after meaningful content and provide a static fallback;
-- respect `prefers-reduced-motion` from the first UI increment;
-- do not download, extract, hide, or background-play YouTube media;
-- keep the provider player visible, attributed, and large enough;
-- query the OST NEXUS database for product search instead of YouTube on each input;
-- keep secrets in environment configuration.
+- 3D загружается после основного контента и всегда имеет статичную замену;
+- **prefers-reduced-motion** учитывается с первого экрана;
+- YouTube-контент нельзя скачивать, извлекать, скрывать или проигрывать в фоне;
+- официальный плеер остаётся видимым, атрибутированным и достаточного размера;
+- поиск выполняется по базе OST NEXUS, а не прямым запросом к YouTube на каждый ввод;
+- секреты находятся только в переменных окружения.
