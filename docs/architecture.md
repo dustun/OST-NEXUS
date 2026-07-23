@@ -58,7 +58,7 @@ Presentation --> Application --> Domain
 - Analytics — анонимные продуктовые события;
 - Administration — редакторские сценарии Filament.
 
-Первым полноценным контекстом станет **Catalog**. Его модели Eloquent будут находиться в Infrastructure, а доменные агрегаты не будут наследоваться от **Model**.
+Первым полноценным контекстом реализован **Catalog**. Его модели Eloquent находятся в Infrastructure, а доменные агрегаты не наследуются от **Model**. Схема и правила контекста описаны в [отдельном документе](catalog.md).
 
 ## Frontend: Feature-Sliced Design
 
