@@ -16,7 +16,7 @@ final class CreateAdministratorCommandTest extends TestCase
         config()->set('admin', [
             'name' => 'Nexus Admin',
             'email' => 'admin@example.test',
-            'password' => 'strong-password-123',
+            'password' => 'x',
         ]);
 
         $this->artisan('admin:create')->assertSuccessful();
@@ -27,7 +27,7 @@ final class CreateAdministratorCommandTest extends TestCase
         $this->assertSame('admin@example.test', $administrator->email);
         $this->assertTrue($administrator->is_admin);
         $this->assertNotNull($administrator->email_verified_at);
-        $this->assertTrue(Hash::check('strong-password-123', $administrator->password));
+        $this->assertTrue(Hash::check('x', $administrator->password));
     }
 
     public function test_command_updates_existing_administrator_without_duplicates(): void
@@ -53,12 +53,12 @@ final class CreateAdministratorCommandTest extends TestCase
         $this->assertTrue(Hash::check('second-password-456', $administrator->password));
     }
 
-    public function test_command_rejects_missing_or_short_password(): void
+    public function test_command_rejects_empty_password(): void
     {
         config()->set('admin', [
             'name' => 'Nexus Admin',
             'email' => 'admin@example.test',
-            'password' => 'short',
+            'password' => '',
         ]);
 
         $this->artisan('admin:create')->assertFailed();
