@@ -65,9 +65,9 @@ tasks:
 
   down:
     aliases: [stop]
-    desc: Остановить инфраструктуру, сохранив данные PostgreSQL
+    desc: Остановить все контейнеры, сохранив данные PostgreSQL
     cmds:
-      - docker compose down
+      - docker compose --profile tools down
 
   restart:
     desc: Перезапустить PostgreSQL
@@ -78,12 +78,30 @@ tasks:
     aliases: [ps]
     desc: Показать состояние контейнеров проекта
     cmds:
-      - docker compose ps
+      - docker compose --profile tools ps
 
   logs:
     desc: Показывать журнал PostgreSQL в реальном времени
     cmds:
       - docker compose logs -f --tail=200 db
+
+  shell:
+    desc: Открыть Bash внутри backend CLI-контейнера
+    preconditions:
+      - sh: test -f backend/.env
+        msg: Сначала выполните task setup — отсутствует backend/.env
+    cmds:
+      - docker compose --profile tools up -d --build db backend-cli
+      - docker compose --profile tools exec backend-cli bash
+
+  admin:create:
+    desc: Создать или обновить администратора из переменных backend/.env
+    preconditions:
+      - sh: test -f backend/.env
+        msg: Сначала выполните task setup — отсутствует backend/.env
+    cmds:
+      - docker compose --profile tools up -d --build db backend-cli
+      - docker compose --profile tools exec -T backend-cli php artisan admin:create
 
   migrate:
     desc: Применить новые миграции базы данных
@@ -129,7 +147,7 @@ tasks:
   config:check:
     desc: Проверить конфигурации Docker Compose и Caddy
     cmds:
-      - docker compose config --quiet
+      - docker compose --profile tools config --quiet
       - caddy validate --config docker/caddy/Caddyfile --adapter caddyfile
 
   backend:test:
