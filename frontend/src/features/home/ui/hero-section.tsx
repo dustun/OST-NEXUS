@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { Play, Radio, Zap } from 'lucide-react';
 import { routes } from '@/shared/config';
 import { Button } from '@/components/ui/button';
-import { games, radioStations } from '@/data/mock';
+import { games, collections } from '@/data/mock';
 import { PixelRadio } from '@/components/player/pixel-radio';
 
 const featuredGame = games[0];
-const featuredStation = radioStations[0];
+const featuredStation = collections.find((c) => c.type === 'radio') || collections[0];
 
 export function HeroSection() {
   return (
@@ -53,7 +53,7 @@ export function HeroSection() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="inline-block h-2 w-2 rounded-full bg-[#28F0FF]" />
-                <span>Сейчас в эфире: {featuredStation.genre}</span>
+                <span>Сейчас в эфире: {featuredStation.title}</span>
               </div>
             </div>
           </motion.div>
