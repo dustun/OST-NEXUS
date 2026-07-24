@@ -4,107 +4,56 @@ declare(strict_types=1);
 
 namespace App\Catalog\Presentation\Filament\Resources\Games;
 
-use App\Catalog\Domain\Enums\CatalogItemType;
+use App\Catalog\Domain\Enums\PublicationStatus;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
-use App\Catalog\Presentation\Filament\Resources\CatalogResource;
-use App\Catalog\Presentation\Filament\Resources\Games\Pages\ManageGames;
-use App\Catalog\Presentation\Filament\Resources\Support\PublicationUi;
-use BackedEnum;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\Textarea;
+use Filament\Schemas\Components\DatePicker;
+use Filament\Schemas\Components\Select;
+use Filament\Schemas\Components\Toggle;
 
-final class GameResource extends CatalogResource
+final class GameResource extends Resource
 {
-    protected static ?string $model                             = Game::class;
+    protected static ?string $model = Game::class;
 
-    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedFilm;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $modelLabel                        = 'игра';
+    protected static ?string $navigationLabel = 'Games';
 
-    protected static ?string $pluralModelLabel                  = 'Игры';
-
-    protected static ?string $recordTitleAttribute              = 'title';
-
-    protected static ?int $navigationSort                       = 10;
-
-    public static function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('title')
-                    ->label('Название')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('slug')
-                    ->label('Slug')
-                    ->required()
-                    ->alphaDash()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                TextInput::make('original_title')
-                    ->label('Оригинальное название')
-                    ->maxLength(255),
-                DatePicker::make('release_date')
-                    ->label('Дата выхода'),
-                Textarea::make('summary')
-                    ->label('Краткое описание')
-                    ->rows(3)
-                    ->columnSpanFull(),
-                Textarea::make('description')
-                    ->label('Полное описание')
-                    ->rows(8)
-                    ->columnSpanFull(),
-                TextInput::make('cover_image_url')
-                    ->label('URL обложки')
-                    ->url()
-                    ->columnSpanFull(),
-            ])
-            ->columns(2);
-    }
+    protected static string|\UnitEnum|null $navigationGroup = 'Catalog';
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('title')
-                    ->label('Название')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('slug')
-                    ->label('Slug')
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('release_date')
-                    ->label('Дата выхода')
-                    ->date('d.m.Y')
-                    ->sortable(),
-                TextColumn::make('tracks_count')
-                    ->label('Треков')
-                    ->counts('tracks'),
-                PublicationUi::statusColumn(),
-            ])
-            ->filters([
-                PublicationUi::statusFilter(),
-            ])
-            ->recordActions([
-                EditAction::make()->label('Редактировать'),
-                ...PublicationUi::actions(CatalogItemType::Game),
-                DeleteAction::make()->label('Удалить'),
-            ])
-            ->defaultSort('created_at', 'desc');
+        return $table->columns([
+            Tables\Columns\TextColumn::make('title')->searchable(),
+            Tables\Columns\TextColumn::make('slug')->searchable(),
+            Tables\Columns\TextColumn::make('original_title')->label('Original Title'),
+            Tables\Columns\TextColumn::make('release_date')->date()->sortable(),
+            Tables\Columns\TextColumn::make('status')->badge(),
+            Tables\Columns\TextColumn::make('published_at')->dateTime()->sortable(),
+        ]);
     }
 
-    public static function getPages(): array
+    public static function formSchema(Schema $schema): Schema
     {
-        return [
-            'index' => ManageGames::route('/'),
-        ];
+        return $schema->components([
+            Section::make('Game Info')->schema([
+                Text::make('title')->required(),
+                Text::make('slug')->required(),
+                Text::make('original_title')->nullable(),
+                Textarea::make('summary')->nullable(),
+                Textarea::make('description')->nullable(),
+                DatePicker::make('release_date')->nullable(),
+                Text::make('cover_image_url')->nullable(),
+                Select::make('status')
+                    ->options(PublicationStatus::options())
+                    ->default(PublicationStatus::Draft->value),
+            ]),
+        ]);
     }
 }

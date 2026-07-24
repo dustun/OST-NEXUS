@@ -1,4 +1,7 @@
-import { routes } from "@/shared/config";
+'use client';
+
+import Link from 'next/link';
+import { routes } from '@/shared/config';
 
 export function NexusHero() {
   return (
@@ -14,12 +17,12 @@ export function NexusHero() {
           связанных миров. Первый технический контур уже собран.
         </p>
         <div className="hero-actions">
-          <a className="button button-primary" href={routes.health}>
-            Проверить API
-          </a>
-          <a className="button button-secondary" href={routes.foundation}>
-            Открыть архитектуру
-          </a>
+          <Link className="button button-primary" href={routes.radio}>
+            Слушать радио
+          </Link>
+          <Link className="button button-secondary" href={routes.library}>
+            Открыть библиотеку
+          </Link>
         </div>
       </div>
 
