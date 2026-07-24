@@ -13,6 +13,7 @@ import {
   Disc3,
   FolderOpen,
   X,
+  ChevronLeft,
 } from 'lucide-react';
 import { routes } from '@/shared/config';
 
@@ -28,13 +29,17 @@ const navItems = [
 
 interface SidebarProps {
   onClose?: () => void;
+  width?: number;
 }
 
-export function Sidebar({ onClose }: SidebarProps) {
+export function Sidebar({ onClose, width = 256 }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 flex-col border-r border-white/5 bg-[#0B0F1A]/95 backdrop-blur-xl flex">
+    <aside
+      className="fixed left-0 top-0 z-40 h-screen flex-col border-r border-white/5 bg-[#0B0F1A]/95 backdrop-blur-xl flex"
+      style={{ width }}
+    >
       <div className="flex h-16 items-center justify-between border-b border-white/5 px-6">
         <Link href={routes.home} className="flex items-center gap-3">
           <motion.div
@@ -47,9 +52,9 @@ export function Sidebar({ onClose }: SidebarProps) {
         {onClose && (
           <button
             onClick={onClose}
-            className="lg:hidden flex h-8 w-8 items-center justify-center rounded-lg text-white/70 hover:bg-white/5 hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-white/70 hover:bg-white/5 hover:text-white"
           >
-            <X className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
         )}
       </div>
