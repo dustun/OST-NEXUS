@@ -1,0 +1,79 @@
+import { create } from 'zustand';
+import { Track, RadioStation, PlayerState } from '@/types';
+
+interface PlayerStore extends PlayerState {
+  queue: Track[];
+  queueIndex: number;
+  isShuffle: boolean;
+  repeat: 'none' | 'all' | 'one';
+  setIsPlaying: (playing: boolean) => void;
+  setCurrentTrack: (track: Track | null) => void;
+  setProgress: (progress: number) => void;
+  setDuration: (duration: number) => void;
+  setVolume: (volume: number) => void;
+  setStation: (station: RadioStation | null) => void;
+  play: (track: Track) => void;
+  pause: () => void;
+  togglePlay: () => void;
+  next: () => void;
+  prev: () => void;
+  setQueue: (tracks: Track[], startIndex?: number) => void;
+  toggleShuffle: () => void;
+  toggleRepeat: () => void;
+  close: () => void;
+}
+
+export const usePlayerStore = create<PlayerStore>((set, get) => ({
+  currentTrack: null,
+  isPlaying: false,
+  progress: 0,
+  duration: 0,
+  volume: 0.7,
+  station: null,
+  queue: [],
+  queueIndex: 0,
+  isShuffle: false,
+  repeat: 'none',
+
+  setIsPlaying: (playing) => set({ isPlaying: playing }),
+  setCurrentTrack: (track) => set({ currentTrack: track }),
+  setProgress: (progress) => set({ progress }),
+  setDuration: (duration) => set({ duration }),
+  setVolume: (volume) => set({ volume }),
+  setStation: (station) => set({ station }),
+
+  play: (track) => set({ currentTrack: track, isPlaying: true, progress: 0 }),
+  pause: () => set({ isPlaying: false }),
+  togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
+
+  next: () => {
+    const { queue, queueIndex, isShuffle, repeat } = get();
+    if (queue.length === 0) return;
+    let nextIndex: number;
+    if (isShuffle) {
+      nextIndex = Math.floor(Math.random() * queue.length);
+    } else if (queueIndex < queue.length - 1) {
+      nextIndex = queueIndex + 1;
+    } else if (repeat === 'all') {
+      nextIndex = 0;
+    } else {
+      set({ isPlaying: false });
+      return;
+    }
+    set({ queueIndex: nextIndex, currentTrack: queue[nextIndex], progress: 0 });
+  },
+
+  prev: () => {
+    const { queue, queueIndex } = get();
+    if (queue.length === 0) return;
+    const prevIndex = queueIndex > 0 ? queueIndex - 1 : queue.length - 1;
+    set({ queueIndex: prevIndex, currentTrack: queue[prevIndex], progress: 0 });
+  },
+
+  setQueue: (tracks, startIndex = 0) => set({ queue: tracks, queueIndex: startIndex }),
+  toggleShuffle: () => set((s) => ({ isShuffle: !s.isShuffle })),
+  toggleRepeat: () => set((s) => ({ repeat: s.repeat === 'none' ? 'all' : s.repeat === 'all' ? 'one' : 'none' })),
+  close: () => set({ currentTrack: null, isPlaying: false, progress: 0, station: null }),
+}));
+
+export const usePlayer = () => usePlayerStore();

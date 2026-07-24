@@ -1,15 +1,18 @@
-import { FoundationOverview } from "@/widgets/foundation-overview";
-import { NexusHero } from "@/widgets/nexus-hero";
-import { SiteFooter } from "@/widgets/site-footer";
-import { SiteHeader } from "@/widgets/site-header";
+'use client';
+
+import { HeroSection, FeaturedRadioSection, TrendingSection, FeaturedGamesSection, MoodsSection, ComposersSection, CTASection } from '@/features/home';
+import { AppShell } from '@/components/layout/app-shell';
 
 export default function Home() {
   return (
-    <main className="site-shell">
-      <SiteHeader />
-      <NexusHero />
-      <FoundationOverview />
-      <SiteFooter />
-    </main>
+    <AppShell>
+      <HeroSection />
+      <FeaturedRadioSection />
+      <TrendingSection />
+      <FeaturedGamesSection />
+      <MoodsSection />
+      <ComposersSection />
+      <CTASection />
+    </AppShell>
   );
 }
