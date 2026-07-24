@@ -2,7 +2,7 @@
 
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { api } from '@/lib/api/resources';
-import type { Game, Track, Collection, Composer, Mood } from '@/types';
+import type { Game, Track, Collection, Composer, Mood, SceneType, PlaybackSource } from '@/types';
 
 export function useGames(): UseQueryResult<Game[], Error> {
   return useQuery({
@@ -80,5 +80,20 @@ export function useMoods(): UseQueryResult<Mood[], Error> {
   return useQuery({
     queryKey: ['moods'],
     queryFn: api.moods.list,
+  });
+}
+
+export function useSceneTypes(): UseQueryResult<SceneType[], Error> {
+  return useQuery({
+    queryKey: ['sceneTypes'],
+    queryFn: api.sceneTypes.list,
+  });
+}
+
+export function usePlaybackSources(trackId: string): UseQueryResult<PlaybackSource[], Error> {
+  return useQuery({
+    queryKey: ['playbackSources', trackId],
+    enabled: !!trackId,
+    queryFn: () => api.playbackSources.list(trackId),
   });
 }

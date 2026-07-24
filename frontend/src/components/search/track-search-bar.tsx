@@ -1,38 +1,46 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Play, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlayerStore } from '@/stores/player-store';
-import { tracks } from '@/data/mock';
+import { useTracks } from '@/lib/hooks/use-catalog';
+import type { Track } from '@/types';
 
 type Provider = 'youtube' | 'soundcloud' | 'all';
 
 export function TrackSearchBar() {
   const [query, setQuery] = useState('');
   const [provider, setProvider] = useState<Provider>('all');
-  const [results, setResults] = useState<typeof tracks>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const { data: tracks } = useTracks();
   const { play, setQueue } = usePlayerStore();
 
+  const results = useMemo(() => {
+    if (!tracks) return [];
+    if (!query.trim()) return [];
+    const q = query.toLowerCase();
+    return tracks.filter(
+      (t) =>
+        t.title.toLowerCase().includes(q) ||
+        t.game.title.toLowerCase().includes(q)
+    );
+  }, [tracks, query]);
+
   const handleSearch = useCallback(
-    async (e: React.FormEvent) => {
+    (e: React.FormEvent) => {
       e.preventDefault();
-      if (!query.trim()) return;
       setIsSearching(true);
-      await new Promise((r) => setTimeout(r, 600));
-      const filtered = tracks.filter((t) => t.title.toLowerCase().includes(query.toLowerCase()));
-      setResults(filtered);
-      setIsSearching(false);
+      setTimeout(() => setIsSearching(false), 300);
     },
-    [query]
+    []
   );
 
-  const handlePlay = (track: (typeof tracks)[number]) => {
-    const allTracks = tracks;
-    const idx = allTracks.findIndex((t) => t.id === track.id);
-    setQueue(allTracks, idx);
+  const handlePlay = (track: Track | undefined) => {
+    if (!track || !tracks) return;
+    const idx = tracks.findIndex((t) => t.id === track.id);
+    setQueue(tracks, idx);
     play(track);
   };
 
