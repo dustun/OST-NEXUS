@@ -2,19 +2,33 @@
 
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
-import { Disc, Music, Play } from 'lucide-react';
+import { Disc, Play } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { composers, tracks } from '@/data/mock';
+import { useComposer, useTracks } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
 export default function ComposerPage() {
   const params = useParams();
-  const composer = composers.find((c) => c.id === params.id);
-  const composerTracks = tracks.filter((t) => t.composers.some((c) => c.id === params.id));
+  const id = params.id as string;
+  const { data: composer, isLoading, error } = useComposer(id);
+  const { data: tracks } = useTracks();
   const { play, setQueue } = usePlayerStore();
 
-  if (!composer) {
+  const composerTracks = tracks?.filter((t) => t.composers?.some((c) => c.id === id)) || [];
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8 animate-pulse">
+          <div className="h-48 w-full rounded-2xl bg-white/5 mb-6" />
+          <div className="h-10 w-3/4 rounded bg-white/10" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !composer) {
     return (
       <div className="mx-auto max-w-[1600px] px-4 py-20 text-center">
         <h1 className="text-4xl font-bold text-white">Композитор не найден</h1>
@@ -75,14 +89,14 @@ export default function ComposerPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-white/40 font-mono">
-                        {Math.floor(track.durationSeconds / 60)}:{(track.durationSeconds % 60).toString().padStart(2, '0')}
+                        {Math.floor(track.durationSeconds / 60)}:{String(track.durationSeconds % 60).padStart(2, '0')}
                       </span>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => {
-                          const idx = tracks.findIndex((t) => t.id === track.id);
-                          setQueue(tracks, idx);
+                          const idx = composerTracks.findIndex((t) => t.id === track.id);
+                          setQueue(composerTracks, idx);
                           play(track);
                         }}
                         className="h-8 w-8 text-white/50 hover:text-[#8B5CF6]"

@@ -3,11 +3,12 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Play, Search, Filter, Gamepad2 } from 'lucide-react';
+import { Play, Gamepad2, Search } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { tracks, games, moods } from '@/data/mock';
+import type { Track } from '@/types';
+import { useTracks, useGames, useMoods } from '@/lib/hooks/use-catalog';
 import { routes } from '@/shared/config';
 import { usePlayerStore } from '@/stores/player-store';
 
@@ -17,9 +18,15 @@ export function LibraryPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const { data: tracks, isLoading: tracksLoading } = useTracks();
+  const { data: games, isLoading: gamesLoading } = useGames();
+  const { data: moods } = useMoods();
   const { play, setQueue } = usePlayerStore();
 
+  const isLoading = tracksLoading || gamesLoading;
+
   const filtered = useMemo(() => {
+    if (!tracks) return [];
     let result = tracks;
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -27,22 +34,42 @@ export function LibraryPage() {
         (t) =>
           t.title.toLowerCase().includes(q) ||
           t.game.title.toLowerCase().includes(q) ||
-          t.moods.some((m) => m.name.toLowerCase().includes(q))
+          t.moods?.some((m) => m.name.toLowerCase().includes(q))
       );
     }
     if (filter === 'game') {
-      result = result.filter((t) => t.gameId === '1');
+      result = result.filter((t) => t.gameId);
     }
     if (filter === 'mood' && selectedMood) {
-      result = result.filter((t) => t.moods.some((m) => m.id === selectedMood));
+      result = result.filter((t) => t.moods?.some((m) => m.id === selectedMood));
     }
     return result;
-  }, [search, filter, selectedMood]);
+  }, [tracks, search, filter, selectedMood]);
 
-  const handlePlay = (track: (typeof tracks)[number]) => {
-    setQueue(tracks, tracks.findIndex((t) => t.id === track.id));
+  const handlePlay = (track: Track | undefined) => {
+    if (!track || !tracks) return;
+    const idx = tracks.findIndex((t) => t.id === track.id);
+    setQueue(tracks, idx);
     play(track);
   };
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Ваша коллекция</div>
+          <h1 className="section-title">Библиотека</h1>
+        </div>
+        <Card className="card-panel">
+          <CardContent className="p-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="h-12 w-full animate-pulse rounded bg-white/5 mb-2" />
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-8">
@@ -79,19 +106,11 @@ export function LibraryPage() {
               <Gamepad2 className="h-4 w-4 mr-1" />
               Игры
             </Button>
-            <Button
-              variant={filter === 'mood' ? 'default' : 'ghost'}
-              onClick={() => setFilter('mood')}
-              className={filter === 'mood' ? 'btn-primary' : 'text-white/60 hover:text-white'}
-            >
-              <Filter className="h-4 w-4 mr-1" />
-              Настроение
-            </Button>
           </div>
         </div>
       </div>
 
-      {filter === 'mood' && (
+      {filter === 'mood' && moods && (
         <div className="mb-6 flex gap-2">
           {moods.map((mood) => (
             <button
@@ -130,14 +149,14 @@ export function LibraryPage() {
                     <div className="text-xs text-white/50 truncate">{track.game.title}</div>
                   </div>
                   <div className="hidden md:flex items-center gap-1">
-                    {track.moods.slice(0, 2).map((mood) => (
+                    {track.moods?.slice(0, 2).map((mood) => (
                       <span key={mood.id} className="tag-mood badge text-[10px]">
                         {mood.name}
                       </span>
                     ))}
                   </div>
                   <div className="hidden lg:flex items-center gap-1 text-xs text-white/40 font-mono">
-                    {Math.floor(track.durationSeconds / 60)}:{(track.durationSeconds % 60).toString().padStart(2, '0')}
+                    {Math.floor(track.durationSeconds / 60)}:{String(track.durationSeconds % 60).padStart(2, '0')}
                   </div>
                   <div className="flex items-center gap-1">
                     <Button
@@ -155,59 +174,63 @@ export function LibraryPage() {
           </CardContent>
         </Card>
 
-        <Card className="card-panel">
-          <CardHeader>
-            <CardTitle className="text-white">Игры</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {games.map((game) => (
-                <Link
-                  key={game.id}
-                  href={routes.game(game.slug)}
-                  className="flex items-center gap-3 rounded-lg p-2 hover:bg-white/5 transition-colors"
-                >
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#8B5CF6]/20 to-[#28F0FF]/20 flex items-center justify-center">
-                    <Gamepad2 className="h-5 w-5 text-white/40" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium text-white truncate">{game.title}</div>
-                    <div className="text-xs text-white/50">{game.genres.join(' / ')}</div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {games && (
+          <Card className="card-panel">
+            <CardHeader>
+              <CardTitle className="text-white">Игры</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {games.map((game) => (
+                  <Link
+                    key={game.id}
+                    href={routes.game(game.slug)}
+                    className="flex items-center gap-3 rounded-lg p-2 hover:bg-white/5 transition-colors"
+                  >
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#8B5CF6]/20 to-[#28F0FF]/20 flex items-center justify-center">
+                      <Gamepad2 className="h-5 w-5 text-white/40" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-white truncate">{game.title}</div>
+                      <div className="text-xs text-white/50">{game.releaseDate}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card className="card-panel">
-          <CardHeader>
-            <CardTitle className="text-white">Настроения</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {moods.map((mood) => (
-                <button
-                  key={mood.id}
-                  onClick={() => {
-                    setFilter('mood');
-                    setSelectedMood(mood.id);
-                  }}
-                  className="w-full flex items-center gap-3 rounded-lg p-2 hover:bg-white/5 transition-colors text-left"
-                >
-                  <div
-                    className="h-3 w-3 rounded-full"
-                    style={{ backgroundColor: mood.color }}
-                  />
-                  <div>
-                    <div className="text-sm font-medium text-white">{mood.name}</div>
-                    <div className="text-xs text-white/50">{mood.description}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {moods && (
+          <Card className="card-panel">
+            <CardHeader>
+              <CardTitle className="text-white">Настроения</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {moods.map((mood) => (
+                  <button
+                    key={mood.id}
+                    onClick={() => {
+                      setFilter('mood');
+                      setSelectedMood(mood.id);
+                    }}
+                    className="w-full flex items-center gap-3 rounded-lg p-2 hover:bg-white/5 transition-colors text-left"
+                  >
+                    <div
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: mood.color }}
+                    />
+                    <div>
+                      <div className="text-sm font-medium text-white">{mood.name}</div>
+                      <div className="text-xs text-white/50">{mood.description}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="card-panel">
           <CardHeader>

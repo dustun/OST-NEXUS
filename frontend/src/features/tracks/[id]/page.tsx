@@ -5,15 +5,27 @@ import { useParams } from 'next/navigation';
 import { Play } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { tracks, games } from '@/data/mock';
+import { useTrack, useTracks } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
 export default function TrackPage() {
   const params = useParams();
-  const track = tracks.find((t) => t.id === params.id);
+  const id = params.id as string;
+  const { data: track, isLoading, error } = useTrack(id);
+  const { data: tracks } = useTracks();
   const { play, setQueue } = usePlayerStore();
 
-  if (!track) {
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8 animate-pulse">
+          <div className="h-10 w-3/4 rounded bg-white/10" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !track) {
     return (
       <div className="mx-auto max-w-[1600px] px-4 py-20 text-center">
         <h1 className="text-4xl font-bold text-white">Трек не найден</h1>
@@ -21,9 +33,8 @@ export default function TrackPage() {
     );
   }
 
-  const game = games.find((g) => g.id === track.gameId);
-
   const handlePlay = () => {
+    if (!tracks) return;
     const idx = tracks.findIndex((t) => t.id === track.id);
     setQueue(tracks, idx);
     play(track);
@@ -49,7 +60,7 @@ export default function TrackPage() {
                 </Button>
                 <div>
                   <div className="font-bold text-white">{track.title}</div>
-                  <div className="text-sm text-white/50">{game?.title}</div>
+                  <div className="text-sm text-white/50">{track.game.title}</div>
                 </div>
               </div>
             </CardContent>
@@ -62,18 +73,18 @@ export default function TrackPage() {
               <div className="space-y-4">
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Игра</div>
-                  <div className="text-sm text-white">{game?.title}</div>
+                  <div className="text-sm text-white">{track.game.title}</div>
                 </div>
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Длительность</div>
                   <div className="text-sm text-white font-mono">
-                    {Math.floor(track.durationSeconds / 60)}:{(track.durationSeconds % 60).toString().padStart(2, '0')}
+                    {Math.floor(track.durationSeconds / 60)}:{String(track.durationSeconds % 60).padStart(2, '0')}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Настроение</div>
                   <div className="flex flex-wrap gap-2">
-                    {track.moods.map((mood) => (
+                    {track.moods?.map((mood) => (
                       <span
                         key={mood.id}
                         className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/60"
