@@ -2,15 +2,18 @@
 
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
-import { Play, Clock, Radio } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Play, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { collections } from '@/data/mock';
+import { useCollections } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
 export default function CollectionPage() {
   const params = useParams();
-  const collection = collections.find((c) => c.id === params.id);
+  const id = params.id as string;
+  const { data: collections } = useCollections();
+  const { play, setQueue, setStation } = usePlayerStore();
+
+  const collection = collections?.find((c) => c.id === id);
 
   if (!collection) {
     return (
@@ -20,14 +23,12 @@ export default function CollectionPage() {
     );
   }
 
-  const { play, setQueue, setStation } = usePlayerStore();
+  const collectionTracks = collection.items?.map((item) => item.track).filter(Boolean) || [];
 
   const handlePlayCollection = () => {
-    const collectionTracks = collection.items.map((item) => item.track);
-    const firstTrack = collectionTracks[0];
-    if (firstTrack) {
+    if (collectionTracks.length > 0) {
       setQueue(collectionTracks, 0);
-      play(firstTrack);
+      play(collectionTracks[0]);
       setStation(collection);
     }
   };
@@ -42,7 +43,7 @@ export default function CollectionPage() {
         <div
           className="h-48 w-full rounded-2xl relative overflow-hidden mb-6"
           style={{
-            background: `linear-gradient(135deg, ${collection.color}33, transparent 70%)`,
+            background: `linear-gradient(135deg, ${collection.color || '#8B5CF6'}33, transparent 70%)`,
           }}
         >
           {collection.isLive && (
@@ -52,7 +53,7 @@ export default function CollectionPage() {
             </div>
           )}
           <div className="absolute bottom-6 left-6">
-            <div className="text-4xl font-bold font-mono lcd-display mb-2" style={{ color: collection.color }}>
+            <div className="text-4xl font-bold font-mono lcd-display mb-2" style={{ color: collection.color || '#8B5CF6' }}>
               {collection.frequency || 'PLAYLIST'}
             </div>
             <h1 className="text-3xl font-bold text-white">{collection.title}</h1>
@@ -66,13 +67,13 @@ export default function CollectionPage() {
             {collection.isLive ? 'Слушать эфир' : 'Воспроизвести'}
           </Button>
           <div className="text-sm text-white/50">
-            {collection.items.length} треков
+            {collection.items?.length || 0} треков
           </div>
         </div>
       </motion.div>
 
       <div className="grid gap-3">
-        {collection.items.map((item, i) => (
+        {collection.items?.map((item, i) => (
           <motion.div
             key={item.id}
             initial={{ opacity: 0, x: -20 }}
@@ -86,7 +87,7 @@ export default function CollectionPage() {
               <div className="text-xs text-white/50 truncate">{item.track.game.title}</div>
             </div>
             <div className="hidden md:flex items-center gap-1">
-              {item.track.moods.slice(0, 2).map((mood) => (
+              {item.track.moods?.slice(0, 2).map((mood) => (
                 <span key={mood.id} className="tag-mood badge text-[10px]">
                   {mood.name}
                 </span>
@@ -94,14 +95,14 @@ export default function CollectionPage() {
             </div>
             <div className="hidden lg:flex items-center gap-1 text-xs text-white/40 font-mono">
               <Clock className="h-3 w-3" />
-              {Math.floor(item.track.durationSeconds / 60)}:{(item.track.durationSeconds % 60).toString().padStart(2, '0')}
+              {Math.floor(item.track.durationSeconds / 60)}:{String(item.track.durationSeconds % 60).padStart(2, '0')}
             </div>
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => {
-                  const allTracks = collection.items.map((ci) => ci.track);
+                  const allTracks = collection.items?.map((ci) => ci.track).filter(Boolean) || [];
                   const idx = allTracks.findIndex((t) => t.id === item.track.id);
                   setQueue(allTracks, idx);
                   play(item.track);
