@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\PlaybackSources;
 
 use App\Catalog\Domain\Enums\CatalogItemType;
 use App\Catalog\Domain\Enums\PlaybackProvider;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\PlaybackSource;
 use App\Catalog\Presentation\Filament\Resources\CatalogResource;
 use App\Catalog\Presentation\Filament\Resources\PlaybackSources\Pages\ManagePlaybackSources;
 use App\Catalog\Presentation\Filament\Resources\Support\PublicationUi;
-use App\Catalog\Infrastructure\Persistence\Eloquent\Models\PlaybackSource;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -25,17 +27,17 @@ use Filament\Tables\Table;
 
 final class PlaybackSourceResource extends CatalogResource
 {
-    protected static ?string $model = PlaybackSource::class;
+    protected static ?string $model                             = PlaybackSource::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPlayCircle;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedPlayCircle;
 
-    protected static ?string $modelLabel = 'источник воспроизведения';
+    protected static ?string $modelLabel                        = 'источник воспроизведения';
 
-    protected static ?string $pluralModelLabel = 'Источники воспроизведения';
+    protected static ?string $pluralModelLabel                  = 'Источники воспроизведения';
 
-    protected static ?string $recordTitleAttribute = 'external_id';
+    protected static ?string $recordTitleAttribute              = 'external_id';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort                       = 60;
 
     public static function form(Schema $schema): Schema
     {
@@ -92,7 +94,7 @@ final class PlaybackSourceResource extends CatalogResource
                     ->sortable(),
                 TextColumn::make('provider')
                     ->label('Провайдер')
-                    ->formatStateUsing(fn (PlaybackProvider|string $state): string => $state instanceof PlaybackProvider
+                    ->formatStateUsing(fn(PlaybackProvider | string $state): string => $state instanceof PlaybackProvider
                         ? 'YouTube'
                         : ucfirst($state))
                     ->badge(),

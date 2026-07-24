@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Application\Commands;
 
 use App\Catalog\Application\Contracts\CatalogPublicationRepository;
-use App\Shared\Contracts\Clock;
 use App\Catalog\Domain\Enums\CatalogItemType;
 use App\Catalog\Domain\Enums\PublicationStatus;
 use App\Catalog\Domain\Services\PublicationPolicy;
+use App\Shared\Contracts\Clock;
 
 final readonly class ChangeCatalogPublicationStatusHandler
 {
@@ -18,7 +20,7 @@ final readonly class ChangeCatalogPublicationStatusHandler
 
     public function handle(ChangeCatalogPublicationStatus $command): void
     {
-        $current = $this->catalog->status($command->type, $command->id);
+        $current   = $this->catalog->status($command->type, $command->id);
         $readiness = $command->type === CatalogItemType::Track
             && $command->target === PublicationStatus::Published
                 ? $this->catalog->trackReadiness($command->id)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Http\DTO;
 
 final readonly class SystemHealthData
@@ -16,8 +18,8 @@ final readonly class SystemHealthData
     public function toArray(): array
     {
         return [
-            'service' => $this->service,
-            'status' => $this->status,
+            'service'   => $this->service,
+            'status'    => $this->status,
             'timestamp' => $this->timestamp,
         ];
     }

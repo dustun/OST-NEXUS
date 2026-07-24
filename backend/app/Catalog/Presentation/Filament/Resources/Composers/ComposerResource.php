@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\Composers;
 
 use App\Catalog\Domain\Enums\CatalogItemType;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
 use App\Catalog\Presentation\Filament\Resources\CatalogResource;
 use App\Catalog\Presentation\Filament\Resources\Composers\Pages\ManageComposers;
 use App\Catalog\Presentation\Filament\Resources\Support\PublicationUi;
-use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -19,17 +21,17 @@ use Filament\Tables\Table;
 
 final class ComposerResource extends CatalogResource
 {
-    protected static ?string $model = Composer::class;
+    protected static ?string $model                             = Composer::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedUserGroup;
 
-    protected static ?string $modelLabel = 'композитор';
+    protected static ?string $modelLabel                        = 'композитор';
 
-    protected static ?string $pluralModelLabel = 'Композиторы';
+    protected static ?string $pluralModelLabel                  = 'Композиторы';
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute              = 'name';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort                       = 30;
 
     public static function form(Schema $schema): Schema
     {

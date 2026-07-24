@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\Games;
 
 use App\Catalog\Domain\Enums\CatalogItemType;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
 use App\Catalog\Presentation\Filament\Resources\CatalogResource;
 use App\Catalog\Presentation\Filament\Resources\Games\Pages\ManageGames;
 use App\Catalog\Presentation\Filament\Resources\Support\PublicationUi;
-use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -20,17 +22,17 @@ use Filament\Tables\Table;
 
 final class GameResource extends CatalogResource
 {
-    protected static ?string $model = Game::class;
+    protected static ?string $model                             = Game::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFilm;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedFilm;
 
-    protected static ?string $modelLabel = 'игра';
+    protected static ?string $modelLabel                        = 'игра';
 
-    protected static ?string $pluralModelLabel = 'Игры';
+    protected static ?string $pluralModelLabel                  = 'Игры';
 
-    protected static ?string $recordTitleAttribute = 'title';
+    protected static ?string $recordTitleAttribute              = 'title';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort                       = 10;
 
     public static function form(Schema $schema): Schema
     {

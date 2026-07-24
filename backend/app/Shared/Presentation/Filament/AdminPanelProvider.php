@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Presentation\Filament;
 
 use Filament\Http\Middleware\Authenticate;
@@ -29,6 +31,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->authGuard('admin')
+            ->sidebarCollapsibleOnDesktop()
+            ->collapsibleNavigationGroups()
             ->brandName('OST NEXUS')
             ->colors([
                 'primary' => Color::Violet,

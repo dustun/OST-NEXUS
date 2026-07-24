@@ -1,0 +1,14 @@
+parameters:
+    paths:
+        - app
+        - bootstrap
+        - config
+        - database
+        - routes
+        - tests
+    excludePaths:
+        - vendor
+        - storage
+    level: 8
+    memoryLimit: 2G
+    checkMissingIterableValueType: false

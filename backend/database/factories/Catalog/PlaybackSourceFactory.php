@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories\Catalog;
 
 use App\Catalog\Domain\Enums\PlaybackProvider;
@@ -17,15 +19,15 @@ final class PlaybackSourceFactory extends Factory
     public function definition(): array
     {
         return [
-            'track_id' => TrackFactory::new(),
-            'provider' => PlaybackProvider::YouTube,
-            'external_id' => fake()->unique()->regexify('[A-Za-z0-9_-]{11}'),
-            'source_url' => null,
-            'sort_order' => 0,
-            'is_primary' => true,
-            'status' => PublicationStatus::Draft,
+            'track_id'        => TrackFactory::new(),
+            'provider'        => PlaybackProvider::YouTube,
+            'external_id'     => fake()->unique()->regexify('[A-Za-z0-9_-]{11}'),
+            'source_url'      => null,
+            'sort_order'      => 0,
+            'is_primary'      => true,
+            'status'          => PublicationStatus::Draft,
             'last_checked_at' => null,
-            'metadata' => null,
+            'metadata'        => null,
         ];
     }
 }

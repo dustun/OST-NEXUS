@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Application\Contracts;
 
 use App\Catalog\Domain\Enums\CatalogItemType;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Catalog;
 
 use App\Catalog\Application\Commands\ChangeCatalogPublicationStatus;
@@ -12,14 +14,13 @@ use App\Catalog\Presentation\Filament\Resources\Moods\Pages\ManageMoods;
 use App\Catalog\Presentation\Filament\Resources\PlaybackSources\Pages\ManagePlaybackSources;
 use App\Catalog\Presentation\Filament\Resources\SceneTypes\Pages\ManageSceneTypes;
 use App\Catalog\Presentation\Filament\Resources\Tracks\Pages\ManageTracks;
-use App\Auth\Infrastructure\Persistence\Model\Admin;
+use Database\Factories\AdminFactory;
 use Database\Factories\Catalog\ComposerFactory;
 use Database\Factories\Catalog\GameFactory;
 use Database\Factories\Catalog\MoodFactory;
 use Database\Factories\Catalog\PlaybackSourceFactory;
 use Database\Factories\Catalog\SceneTypeFactory;
 use Database\Factories\Catalog\TrackFactory;
-use Database\Factories\AdminFactory;
 use DomainException;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -68,7 +69,7 @@ final class CatalogAdminTest extends TestCase
     public function test_admin_can_publish_and_delete_draft_records(): void
     {
         $admin = AdminFactory::new()->create();
-        $game = GameFactory::new()->create();
+        $game  = GameFactory::new()->create();
 
         $this->assertTrue(Gate::forUser($admin)->allows('publish', $game));
         $this->assertTrue(Gate::forUser($admin)->allows('delete', $game));
@@ -98,12 +99,12 @@ final class CatalogAdminTest extends TestCase
 
     public function test_complete_track_can_be_published_and_archived(): void
     {
-        $game = GameFactory::new()->create();
-        $composer = ComposerFactory::new()->create();
-        $track = TrackFactory::new()->create(['game_id' => $game->getKey()]);
-        $mood = MoodFactory::new()->create();
+        $game      = GameFactory::new()->create();
+        $composer  = ComposerFactory::new()->create();
+        $track     = TrackFactory::new()->create(['game_id' => $game->getKey()]);
+        $mood      = MoodFactory::new()->create();
         $sceneType = SceneTypeFactory::new()->create();
-        $source = PlaybackSourceFactory::new()->create(['track_id' => $track->getKey()]);
+        $source    = PlaybackSourceFactory::new()->create(['track_id' => $track->getKey()]);
 
         $track->composers()->attach($composer, ['role' => 'composer']);
         $track->moods()->attach($mood);

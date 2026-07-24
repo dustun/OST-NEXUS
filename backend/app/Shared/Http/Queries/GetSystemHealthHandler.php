@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Http\Queries;
 
 use App\Shared\Contracts\Clock;
-use App\Shared\Http\DTO\SystemHealthData;
 use App\Shared\Domain\ValueObjects\ServiceStatus;
+use App\Shared\Http\DTO\SystemHealthData;
 
 final readonly class GetSystemHealthHandler
 {

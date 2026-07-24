@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Catalog;
 
 use App\Catalog\Domain\Enums\PlaybackProvider;
@@ -60,8 +62,8 @@ final class CatalogSchemaTest extends TestCase
 
     public function test_catalog_factories_create_related_records(): void
     {
-        $game = GameFactory::new()->create();
-        $track = TrackFactory::new()->create([
+        $game   = GameFactory::new()->create();
+        $track  = TrackFactory::new()->create([
             'game_id' => $game->getKey(),
         ]);
         $source = PlaybackSourceFactory::new()->create([

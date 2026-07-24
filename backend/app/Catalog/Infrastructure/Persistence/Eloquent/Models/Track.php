@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Infrastructure\Persistence\Eloquent\Models;
 
 use App\Catalog\Domain\Enums\PublicationStatus;
@@ -21,15 +23,6 @@ final class Track extends CatalogModel
         'status',
         'published_at',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'is_spoiler' => 'boolean',
-            'status' => PublicationStatus::class,
-            'published_at' => 'immutable_datetime',
-        ];
-    }
 
     public function game(): BelongsTo
     {
@@ -55,5 +48,14 @@ final class Track extends CatalogModel
     public function playbackSources(): HasMany
     {
         return $this->hasMany(PlaybackSource::class)->orderBy('sort_order');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'is_spoiler'   => 'boolean',
+            'status'       => PublicationStatus::class,
+            'published_at' => 'immutable_datetime',
+        ];
     }
 }
