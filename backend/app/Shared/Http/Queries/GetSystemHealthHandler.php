@@ -3,7 +3,7 @@
 namespace App\Shared\Http\Queries;
 
 use App\Shared\Contracts\Clock;
-use App\Shared\DTO\SystemHealthData;
+use App\Shared\Http\DTO\SystemHealthData;
 use App\Shared\Domain\ValueObjects\ServiceStatus;
 
 final readonly class GetSystemHealthHandler

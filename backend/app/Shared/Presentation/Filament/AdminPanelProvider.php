@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->authGuard('admin')
             ->brandName('OST NEXUS')
             ->colors([
                 'primary' => Color::Violet,

@@ -2,8 +2,7 @@
 
 namespace Tests\Feature\Administration;
 
-use App\Auth\Domain\Enums\UserRole;
-use App\Auth\Infrastructure\Persistence\Model\User;
+use App\Auth\Infrastructure\Persistence\Model\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -22,12 +21,10 @@ final class CreateAdministratorCommandTest extends TestCase
 
         $this->artisan('admin:create')->assertSuccessful();
 
-        $administrator = User::query()->sole();
+        $administrator = Admin::query()->sole();
 
         $this->assertSame('Nexus Admin', $administrator->name);
         $this->assertSame('admin@example.test', $administrator->email);
-        $this->assertTrue($administrator->is_admin);
-        $this->assertSame(UserRole::Administrator, $administrator->role);
         $this->assertNotNull($administrator->email_verified_at);
         $this->assertTrue(Hash::check('x', $administrator->password));
     }
@@ -48,9 +45,9 @@ final class CreateAdministratorCommandTest extends TestCase
         ]);
         $this->artisan('admin:create')->assertSuccessful();
 
-        $administrator = User::query()->sole();
+        $administrator = Admin::query()->sole();
 
-        $this->assertDatabaseCount('users', 1);
+        $this->assertDatabaseCount('admins', 1);
         $this->assertSame('Updated Admin', $administrator->name);
         $this->assertTrue(Hash::check('second-password-456', $administrator->password));
     }
@@ -65,6 +62,6 @@ final class CreateAdministratorCommandTest extends TestCase
 
         $this->artisan('admin:create')->assertFailed();
 
-        $this->assertDatabaseCount('users', 0);
+        $this->assertDatabaseCount('admins', 0);
     }
 }

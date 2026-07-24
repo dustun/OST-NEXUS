@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Catalog\Infrastructure\Persistence\Eloquent;
+namespace App\Catalog\Infrastructure\Repositories;
 
 use App\Catalog\Application\Contracts\CatalogPublicationRepository;
 use App\Catalog\Domain\Enums\CatalogItemType;
