@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Catalog\Enums\PlaybackProvider;
-use App\Domain\Catalog\Enums\PublicationStatus;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Composer;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Game;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Mood;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\PlaybackSource;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\SceneType;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Track;
+use App\Catalog\Domain\Enums\PlaybackProvider;
+use App\Catalog\Domain\Enums\PublicationStatus;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\PlaybackSource;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\SceneType;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Track;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

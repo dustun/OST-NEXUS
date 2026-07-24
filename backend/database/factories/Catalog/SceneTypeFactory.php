@@ -2,7 +2,7 @@
 
 namespace Database\Factories\Catalog;
 
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\SceneType;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\SceneType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

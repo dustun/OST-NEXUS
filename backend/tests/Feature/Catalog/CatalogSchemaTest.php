@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Catalog;
 
-use App\Domain\Catalog\Enums\PlaybackProvider;
-use App\Domain\Catalog\Enums\PublicationStatus;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Game;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Track;
+use App\Catalog\Domain\Enums\PlaybackProvider;
+use App\Catalog\Domain\Enums\PublicationStatus;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Track;
 use Database\Factories\Catalog\GameFactory;
 use Database\Factories\Catalog\PlaybackSourceFactory;
 use Database\Factories\Catalog\TrackFactory;

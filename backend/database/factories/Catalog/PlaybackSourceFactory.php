@@ -2,9 +2,9 @@
 
 namespace Database\Factories\Catalog;
 
-use App\Domain\Catalog\Enums\PlaybackProvider;
-use App\Domain\Catalog\Enums\PublicationStatus;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\PlaybackSource;
+use App\Catalog\Domain\Enums\PlaybackProvider;
+use App\Catalog\Domain\Enums\PublicationStatus;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\PlaybackSource;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

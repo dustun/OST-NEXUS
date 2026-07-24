@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Domain\Catalog;
 
-use App\Domain\Catalog\Entities\Game;
-use App\Domain\Catalog\Entities\Track;
-use App\Domain\Catalog\Enums\PublicationStatus;
-use App\Domain\Catalog\ValueObjects\CatalogId;
-use App\Domain\Catalog\ValueObjects\Slug;
+use App\Catalog\Domain\Entities\Game;
+use App\Catalog\Domain\Entities\Track;
+use App\Catalog\Domain\Enums\PublicationStatus;
+use App\Catalog\Domain\ValueObjects\CatalogId;
+use App\Catalog\Domain\ValueObjects\Slug;
 use DomainException;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;

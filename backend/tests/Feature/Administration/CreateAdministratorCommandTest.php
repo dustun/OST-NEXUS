@@ -2,7 +2,8 @@
 
 namespace Tests\Feature\Administration;
 
-use App\Models\User;
+use App\Auth\Domain\Enums\UserRole;
+use App\Auth\Infrastructure\Persistence\Model\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -26,6 +27,7 @@ final class CreateAdministratorCommandTest extends TestCase
         $this->assertSame('Nexus Admin', $administrator->name);
         $this->assertSame('admin@example.test', $administrator->email);
         $this->assertTrue($administrator->is_admin);
+        $this->assertSame(UserRole::Administrator, $administrator->role);
         $this->assertNotNull($administrator->email_verified_at);
         $this->assertTrue(Hash::check('x', $administrator->password));
     }
