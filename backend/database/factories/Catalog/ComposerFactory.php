@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories\Catalog;
 
 use App\Catalog\Domain\Enums\PublicationStatus;
@@ -16,11 +18,11 @@ final class ComposerFactory extends Factory
     public function definition(): array
     {
         return [
-            'slug' => fake()->unique()->slug(2),
-            'name' => fake()->name(),
-            'bio' => fake()->paragraph(),
-            'photo_url' => null,
-            'status' => PublicationStatus::Draft,
+            'slug'         => fake()->unique()->slug(2),
+            'name'         => fake()->name(),
+            'bio'          => fake()->paragraph(),
+            'photo_url'    => null,
+            'status'       => PublicationStatus::Draft,
             'published_at' => null,
         ];
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Administration;
 
 use App\Auth\Infrastructure\Persistence\Model\Admin;
@@ -14,8 +16,8 @@ final class CreateAdministratorCommandTest extends TestCase
     public function test_command_creates_an_administrator_from_configuration(): void
     {
         config()->set('admin', [
-            'name' => 'Nexus Admin',
-            'email' => 'admin@example.test',
+            'name'     => 'Nexus Admin',
+            'email'    => 'admin@example.test',
             'password' => 'x',
         ]);
 
@@ -32,15 +34,15 @@ final class CreateAdministratorCommandTest extends TestCase
     public function test_command_updates_existing_administrator_without_duplicates(): void
     {
         config()->set('admin', [
-            'name' => 'Nexus Admin',
-            'email' => 'admin@example.test',
+            'name'     => 'Nexus Admin',
+            'email'    => 'admin@example.test',
             'password' => 'first-password-123',
         ]);
         $this->artisan('admin:create')->assertSuccessful();
 
         config()->set('admin', [
-            'name' => 'Updated Admin',
-            'email' => 'admin@example.test',
+            'name'     => 'Updated Admin',
+            'email'    => 'admin@example.test',
             'password' => 'second-password-456',
         ]);
         $this->artisan('admin:create')->assertSuccessful();
@@ -55,8 +57,8 @@ final class CreateAdministratorCommandTest extends TestCase
     public function test_command_rejects_empty_password(): void
     {
         config()->set('admin', [
-            'name' => 'Nexus Admin',
-            'email' => 'admin@example.test',
+            'name'     => 'Nexus Admin',
+            'email'    => 'admin@example.test',
             'password' => '',
         ]);
 

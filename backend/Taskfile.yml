@@ -1,0 +1,24 @@
+---
+version: "1.0"
+
+tasks:
+  fix:
+    desc: "Run PHP CS Fixer"
+    cmds:
+      - ./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php
+
+  fix-dry-run:
+    desc: "Run PHP CS Fixer dry-run"
+    cmds:
+      - ./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --diff
+
+  analyse:
+    desc: "Run Larastan static analysis"
+    cmds:
+      - ./vendor/bin/phpstan analyse --configuration=phpstan.neon --memory-limit=2G --no-progress
+
+  check:
+    desc: "Run code style and static analysis"
+    cmds:
+      - task: fix-dry-run
+      - task: analyse

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Auth\Presentation\Console\Commands;
+declare(strict_types=1);
+
+namespace App\CLI\Commands;
 
 use App\Auth\Infrastructure\Persistence\Model\Admin;
 use Filament\Commands\MakeUserCommand;
@@ -11,23 +13,15 @@ use InvalidArgumentException;
 
 final class CreateAdministratorCommand extends MakeUserCommand
 {
-    protected $signature = 'admin:create';
+    protected $signature   = 'admin:create';
 
-    protected $aliases = [];
+    protected $aliases     = [];
 
     protected $description = 'Создать или обновить администратора из переменных окружения';
 
-    /**
-     * @return array<never>
-     */
-    protected function getOptions(): array
-    {
-        return [];
-    }
-
     public function handle(): int
     {
-        $this->panel = Filament::getPanel('admin', isStrict: false);
+        $this->panel   = Filament::getPanel('admin', isStrict: false);
 
         if (! $this->panel) {
             $this->components->error('Панель Filament с идентификатором admin не зарегистрирована.');
@@ -46,18 +40,26 @@ final class CreateAdministratorCommand extends MakeUserCommand
         $administrator = Admin::query()
             ->where('email', $data['email'])
             ->first();
-        $created = $administrator === null;
+        $created       = $administrator === null;
         $administrator ??= new Admin();
 
         $administrator->forceFill($data)->save();
 
-        $action = $created ? 'создан' : 'обновлён';
+        $action        = $created ? 'создан' : 'обновлён';
 
         $this->components->info(
             "Администратор {$data['name']} <{$data['email']}> {$action}.",
         );
 
         return self::SUCCESS;
+    }
+
+    /**
+     * @return array<never>
+     */
+    protected function getOptions(): array
+    {
+        return [];
     }
 
     protected function getUserModel(): string
@@ -75,8 +77,8 @@ final class CreateAdministratorCommand extends MakeUserCommand
      */
     protected function getUserData(): array
     {
-        $name = trim((string) config('admin.name', ''));
-        $email = strtolower(trim((string) config('admin.email', '')));
+        $name     = trim((string) config('admin.name', ''));
+        $email    = strtolower(trim((string) config('admin.email', '')));
         $password = (string) config('admin.password', '');
 
         if ($name === '') {
@@ -92,9 +94,9 @@ final class CreateAdministratorCommand extends MakeUserCommand
         }
 
         return [
-            'name' => $name,
-            'email' => $email,
-            'password' => Hash::make($password),
+            'name'              => $name,
+            'email'             => $email,
+            'password'          => Hash::make($password),
             'email_verified_at' => now(),
         ];
     }

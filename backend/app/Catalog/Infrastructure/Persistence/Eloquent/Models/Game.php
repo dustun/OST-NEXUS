@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Infrastructure\Persistence\Eloquent\Models;
 
 use App\Catalog\Domain\Enums\PublicationStatus;
@@ -19,17 +21,17 @@ final class Game extends CatalogModel
         'published_at',
     ];
 
+    public function tracks(): HasMany
+    {
+        return $this->hasMany(Track::class)->orderBy('disc_number')->orderBy('track_number');
+    }
+
     protected function casts(): array
     {
         return [
             'release_date' => 'date',
-            'status' => PublicationStatus::class,
+            'status'       => PublicationStatus::class,
             'published_at' => 'immutable_datetime',
         ];
-    }
-
-    public function tracks(): HasMany
-    {
-        return $this->hasMany(Track::class)->orderBy('disc_number')->orderBy('track_number');
     }
 }

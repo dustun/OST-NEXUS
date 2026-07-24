@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Policies;
 
+use App\Auth\Infrastructure\Persistence\Model\Admin;
 use App\Catalog\Domain\Enums\PublicationStatus;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
@@ -9,7 +12,6 @@ use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\PlaybackSource;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\SceneType;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Track;
-use App\Auth\Infrastructure\Persistence\Model\Admin;
 use Illuminate\Database\Eloquent\Model;
 
 final class CatalogPolicy
@@ -75,11 +77,11 @@ final class CatalogPolicy
     private function hasDependentRecords(Model $record): bool
     {
         return match (true) {
-            $record instanceof Game => $record->tracks()->exists(),
+            $record instanceof Game      => $record->tracks()->exists(),
             $record instanceof Composer,
             $record instanceof Mood,
             $record instanceof SceneType => $record->tracks()->exists(),
-            default => false,
+            default                      => false,
         };
     }
 }

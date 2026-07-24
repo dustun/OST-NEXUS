@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\SceneTypes;
 
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\SceneType;
 use App\Catalog\Presentation\Filament\Resources\CatalogResource;
 use App\Catalog\Presentation\Filament\Resources\SceneTypes\Pages\ManageSceneTypes;
-use App\Catalog\Infrastructure\Persistence\Eloquent\Models\SceneType;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -17,17 +19,17 @@ use Filament\Tables\Table;
 
 final class SceneTypeResource extends CatalogResource
 {
-    protected static ?string $model = SceneType::class;
+    protected static ?string $model                             = SceneType::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static ?string $modelLabel = 'тип сцены';
+    protected static ?string $modelLabel                        = 'тип сцены';
 
-    protected static ?string $pluralModelLabel = 'Типы сцен';
+    protected static ?string $pluralModelLabel                  = 'Типы сцен';
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute              = 'name';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort                       = 50;
 
     public static function form(Schema $schema): Schema
     {

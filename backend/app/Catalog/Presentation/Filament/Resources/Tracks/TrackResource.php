@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\Tracks;
 
 use App\Catalog\Domain\Enums\CatalogItemType;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Track;
 use App\Catalog\Presentation\Filament\Resources\CatalogResource;
 use App\Catalog\Presentation\Filament\Resources\Support\PublicationUi;
 use App\Catalog\Presentation\Filament\Resources\Tracks\Pages\ManageTracks;
-use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Track;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -24,17 +26,17 @@ use Filament\Tables\Table;
 
 final class TrackResource extends CatalogResource
 {
-    protected static ?string $model = Track::class;
+    protected static ?string $model                             = Track::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMusicalNote;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedMusicalNote;
 
-    protected static ?string $modelLabel = 'трек';
+    protected static ?string $modelLabel                        = 'трек';
 
-    protected static ?string $pluralModelLabel = 'Треки';
+    protected static ?string $pluralModelLabel                  = 'Треки';
 
-    protected static ?string $recordTitleAttribute = 'title';
+    protected static ?string $recordTitleAttribute              = 'title';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort                       = 20;
 
     public static function form(Schema $schema): Schema
     {
@@ -116,7 +118,7 @@ final class TrackResource extends CatalogResource
                     ->sortable(),
                 TextColumn::make('duration_seconds')
                     ->label('Длительность')
-                    ->formatStateUsing(fn (?int $state): string => self::formatDuration($state)),
+                    ->formatStateUsing(fn(?int $state): string => self::formatDuration($state)),
                 IconColumn::make('is_spoiler')
                     ->label('Спойлер')
                     ->boolean(),
