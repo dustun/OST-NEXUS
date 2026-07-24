@@ -12,6 +12,7 @@ import {
   Settings,
   Disc3,
   FolderOpen,
+  X,
 } from 'lucide-react';
 import { routes } from '@/shared/config';
 
@@ -25,12 +26,16 @@ const navItems = [
   { href: routes.composers, label: 'Композиторы', icon: Disc3 },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 flex-col border-r border-white/5 bg-[#0B0F1A]/95 backdrop-blur-xl hidden lg:flex">
-      <div className="flex h-16 items-center border-b border-white/5 px-6">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 flex-col border-r border-white/5 bg-[#0B0F1A]/95 backdrop-blur-xl flex">
+      <div className="flex h-16 items-center justify-between border-b border-white/5 px-6">
         <Link href={routes.home} className="flex items-center gap-3">
           <motion.div
             className="h-8 w-8 rounded-full border border-[#8B5CF6] bg-gradient-to-br from-[#8B5CF6] to-[#28F0FF]"
@@ -39,6 +44,14 @@ export function Sidebar() {
           />
           <span className="font-bold tracking-wider text-white">OST NEXUS</span>
         </Link>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden flex h-8 w-8 items-center justify-center rounded-lg text-white/70 hover:bg-white/5 hover:text-white"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 overflow-y-auto p-4">
@@ -49,6 +62,7 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onClose}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
                   isActive
                     ? 'bg-[#8B5CF6]/10 text-[#A78BFA]'
@@ -74,6 +88,7 @@ export function Sidebar() {
           </div>
           <Link
             href="/admin"
+            onClick={onClose}
             className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white/60 transition-all hover:bg-white/5 hover:text-white"
           >
             <Settings className="h-5 w-5" />

@@ -9,25 +9,26 @@ import { Scanlines, Vignette } from '@/components/effects';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-interface AppShellProps {
-  children: React.ReactNode;
-}
+const SIDEBAR_WIDTH = 256;
 
-export function AppShell({ children }: AppShellProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const x = useMotionValue(0);
-  const sidebarOpacity = useTransform(x, [0, 260], [1, 0]);
-  const sidebarTranslate = useTransform(x, [0, 260], [0, -260]);
-
-  const closeSidebar = useCallback(() => {
-    animate(x, 260, { type: 'spring', damping: 25, stiffness: 300 });
-    setSidebarOpen(false);
-  }, [x]);
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   const openSidebar = useCallback(() => {
-    animate(x, 0, { type: 'spring', damping: 25, stiffness: 300 });
-    setSidebarOpen(true);
-  }, [x]);
+    setOpen(true);
+    setMounted(true);
+  }, []);
+
+  const closeSidebar = useCallback(() => {
+    setOpen(false);
+    setMounted(false);
+  }, []);
+
+  const toggleSidebar = useCallback(() => {
+    setOpen((prev) => !prev);
+    setMounted((prev) => !prev);
+  }, []);
 
   return (
     <div className="site-shell relative min-h-screen">
@@ -35,39 +36,45 @@ export function AppShell({ children }: AppShellProps) {
       <div className="scanlines" />
       <div className="vignette" />
 
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
-        <Sidebar />
-      </div>
-
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-          onClick={closeSidebar}
-        />
+      {/* Desktop sidebar + overlay */}
+      {open && (
+        <>
+          <div className="hidden lg:block">
+            <Sidebar />
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-30 bg-black/20 lg:hidden"
+            onClick={closeSidebar}
+          />
+        </>
       )}
 
-      {/* Mobile Sidebar */}
-      <motion.div
-        style={{ x, opacity: sidebarOpacity, translate: sidebarTranslate }}
-        className="fixed left-0 top-0 z-50 h-screen w-64 lg:hidden"
-      >
-        <Sidebar />
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={closeSidebar}
-          className="absolute top-4 right-4 h-8 w-8 text-white/70 hover:text-white"
+      {/* Mobile sidebar drawer */}
+      {mounted && (
+        <motion.div
+          initial={{ x: -SIDEBAR_WIDTH }}
+          animate={{ x: open ? 0 : -SIDEBAR_WIDTH }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="fixed left-0 top-0 z-50 h-screen w-64 lg:hidden"
         >
-          <X className="h-5 w-5" />
-        </Button>
-      </motion.div>
+          <Sidebar onClose={closeSidebar} />
+        </motion.div>
+      )}
 
-      {/* Mobile Header with Menu Button */}
+      {/* Desktop toggle button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleSidebar}
+        className="hidden lg:flex fixed top-4 left-4 z-50 h-9 w-9 text-white/70 hover:text-white"
+      >
+        {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </Button>
+
+      {/* Mobile top bar */}
       <div className="lg:hidden sticky top-0 z-30 border-b border-white/5 bg-[#0B0F1A]/90 backdrop-blur-xl">
         <div className="flex items-center justify-between px-4 py-3">
           <Button
@@ -83,7 +90,11 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       </div>
 
-      <main className="lg:ml-64 pb-24 lg:pb-32">
+      {/* Main content */}
+      <main
+        className="min-h-screen transition-all duration-300 pb-24 lg:pb-32"
+        style={{ marginLeft: open ? SIDEBAR_WIDTH : 0 }}
+      >
         {children}
       </main>
 
