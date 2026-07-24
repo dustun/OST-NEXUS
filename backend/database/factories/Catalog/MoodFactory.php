@@ -2,7 +2,7 @@
 
 namespace Database\Factories\Catalog;
 
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Mood;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

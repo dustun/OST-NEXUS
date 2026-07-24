@@ -2,8 +2,8 @@
 
 namespace Database\Factories\Catalog;
 
-use App\Domain\Catalog\Enums\PublicationStatus;
-use App\Infrastructure\Persistence\Eloquent\Catalog\Models\Composer;
+use App\Catalog\Domain\Enums\PublicationStatus;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
