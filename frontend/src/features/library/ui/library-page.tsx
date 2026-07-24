@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -14,7 +15,7 @@ import { usePlayerStore } from '@/stores/player-store';
 
 type FilterType = 'all' | 'game' | 'mood';
 
-export function LibraryPage() {
+export const LibraryPage = React.memo(function LibraryPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
@@ -245,4 +246,4 @@ export function LibraryPage() {
       </div>
     </div>
   );
-}
+});

@@ -1,12 +1,13 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Gamepad2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGames } from '@/lib/hooks/use-catalog';
 
-export function GamesPage() {
+export const GamesPage = React.memo(function GamesPage() {
   const { data: games, isLoading, error } = useGames();
 
   if (isLoading) {
@@ -75,4 +76,4 @@ export function GamesPage() {
       </div>
     </div>
   );
-}
+});

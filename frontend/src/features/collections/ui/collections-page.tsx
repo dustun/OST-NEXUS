@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FolderOpen, Radio } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import type { Collection } from '@/types';
 import { useCollections } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
-export function CollectionsPage() {
+export const CollectionsPage = React.memo(function CollectionsPage() {
   const { data: collections, isLoading, error } = useCollections();
   const { play, setQueue, setStation } = usePlayerStore();
 
@@ -113,4 +114,4 @@ export function CollectionsPage() {
       </div>
     </div>
   );
-}
+});

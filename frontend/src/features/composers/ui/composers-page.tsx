@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Disc } from 'lucide-react';
@@ -7,7 +8,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { useComposers } from '@/lib/hooks/use-catalog';
 import { routes } from '@/shared/config';
 
-export function ComposersPage() {
+export const ComposersPage = React.memo(function ComposersPage() {
   const { data: composers, isLoading, error } = useComposers();
 
   if (isLoading) {
@@ -73,4 +74,4 @@ export function ComposersPage() {
       </div>
     </div>
   );
-}
+});

@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Search } from 'lucide-react';
@@ -10,7 +11,7 @@ import { useTracks } from '@/lib/hooks/use-catalog';
 import type { Track } from '@/types';
 import { usePlayerStore } from '@/stores/player-store';
 
-export function TracksPage() {
+export const TracksPage = React.memo(function TracksPage() {
   const [search, setSearch] = useState('');
   const { data: tracks, isLoading, error } = useTracks();
   const { play, setQueue } = usePlayerStore();
@@ -133,4 +134,4 @@ export function TracksPage() {
       </div>
     </div>
   );
-}
+});

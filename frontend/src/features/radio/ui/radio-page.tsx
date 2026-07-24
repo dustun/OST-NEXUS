@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { TrackSearchBar } from '@/components/search/track-search-bar';
 import { useCollections } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
-export function RadioPage() {
+export const RadioPage = React.memo(function RadioPage() {
   const { play, setQueue, setStation } = usePlayerStore();
   const { data: collections, isLoading, error } = useCollections();
 
@@ -111,4 +112,4 @@ export function RadioPage() {
       </div>
     </div>
   );
-}
+});
