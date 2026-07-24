@@ -11,6 +11,7 @@ import {
   Music2,
   Settings,
   Disc3,
+  FolderOpen,
 } from 'lucide-react';
 import { routes } from '@/shared/config';
 
@@ -20,6 +21,7 @@ const navItems = [
   { href: routes.games, label: 'Игры', icon: Gamepad2 },
   { href: routes.tracks, label: 'Треки', icon: Music2 },
   { href: routes.radio, label: 'Радио', icon: Radio },
+  { href: routes.collections, label: 'Подборки', icon: FolderOpen },
   { href: routes.composers, label: 'Композиторы', icon: Disc3 },
 ];
 

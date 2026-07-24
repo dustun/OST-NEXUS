@@ -19,8 +19,9 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { usePlayerStore } from '@/stores/player-store';
 import { Equalizer } from '@/components/ui/equalizer';
+import { Collection } from '@/types';
 
-function resolveSliderValue(value: number | readonly number[]): number {
+function resolveValue(value: number | readonly number[]): number {
   if (typeof value === 'number') return value;
   return (value as unknown as number[])[0];
 }
@@ -87,7 +88,7 @@ export function CassetteDeck() {
                     <div className="mt-1 flex items-center gap-1">
                       <Radio className="h-3 w-3 text-[#8B5CF6]" />
                       <span className="text-[10px] font-bold text-[#A78BFA]">
-                        {station.name} • {station.frequency}
+                        {station.title} • {station.frequency}
                       </span>
                     </div>
                   )}
@@ -152,7 +153,7 @@ export function CassetteDeck() {
                       step={0.1}
                       className="absolute inset-0 w-full"
                       onValueChange={(value) => {
-                        const nextValue = resolveSliderValue(value);
+                        const nextValue = resolveValue(value);
                         const newProgress = (nextValue / 100) * duration;
                         usePlayerStore.setState({ progress: newProgress });
                       }}
@@ -178,7 +179,7 @@ export function CassetteDeck() {
                     max={100}
                     step={1}
                     className="w-20"
-                    onValueChange={(value) => setVolume(resolveSliderValue(value) / 100)}
+                    onValueChange={(value) => setVolume(resolveValue(value) / 100)}
                   />
                 </div>
                 <Button
