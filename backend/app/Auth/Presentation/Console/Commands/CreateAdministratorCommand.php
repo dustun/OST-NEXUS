@@ -2,7 +2,7 @@
 
 namespace App\Auth\Presentation\Console\Commands;
 
-use App\Auth\Domain\Enums\UserRole;
+use App\Auth\Infrastructure\Persistence\Model\Admin;
 use Filament\Commands\MakeUserCommand;
 use Filament\Facades\Filament;
 use Illuminate\Support\Carbon;
@@ -43,11 +43,11 @@ final class CreateAdministratorCommand extends MakeUserCommand
             return self::FAILURE;
         }
 
-        $administrator = $this->getUserModel()::query()
+        $administrator = Admin::query()
             ->where('email', $data['email'])
             ->first();
         $created = $administrator === null;
-        $administrator ??= new ($this->getUserModel());
+        $administrator ??= new Admin();
 
         $administrator->forceFill($data)->save();
 
@@ -60,14 +60,17 @@ final class CreateAdministratorCommand extends MakeUserCommand
         return self::SUCCESS;
     }
 
+    protected function getUserModel(): string
+    {
+        return Admin::class;
+    }
+
     /**
      * @return array{
      *     name: string,
      *     email: string,
      *     password: string,
      *     email_verified_at: Carbon,
-     *     is_admin: true,
-     *     role: UserRole
      * }
      */
     protected function getUserData(): array
@@ -93,8 +96,6 @@ final class CreateAdministratorCommand extends MakeUserCommand
             'email' => $email,
             'password' => Hash::make($password),
             'email_verified_at' => now(),
-            'is_admin' => true,
-            'role' => UserRole::Administrator,
         ];
     }
 }

@@ -2,8 +2,9 @@
 
 namespace App\Auth\Infrastructure\Persistence\Model;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use Database\Factories\AdminFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,10 +13,12 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class Admin extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<UserFactory> */
+    /** @use HasFactory<AdminFactory> */
     use HasFactory, Notifiable;
+
+    protected $table = 'admins';
 
     /**
      * Get the attributes that should be cast.
@@ -28,5 +31,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $panel->getId() === 'admin';
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Catalog\Presentation\Policies;
 
-use App\Auth\Domain\Enums\UserRole;
 use App\Catalog\Domain\Enums\PublicationStatus;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
@@ -10,46 +9,37 @@ use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\PlaybackSource;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\SceneType;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Track;
-use App\Auth\Infrastructure\Persistence\Model\User;
+use App\Auth\Infrastructure\Persistence\Model\Admin;
 use Illuminate\Database\Eloquent\Model;
 
 final class CatalogPolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(Admin $admin): bool
     {
-        return $this->isPanelUser($user);
+        return true;
     }
 
-    public function view(User $user, Model $record): bool
+    public function view(Admin $admin, Model $record): bool
     {
-        return $this->isPanelUser($user);
+        return true;
     }
 
-    public function create(User $user): bool
+    public function create(Admin $admin): bool
     {
-        return $this->isPanelUser($user);
+        return true;
     }
 
-    public function update(User $user, Model $record): bool
+    public function update(Admin $admin, Model $record): bool
     {
-        if (! $this->isPanelUser($user)) {
-            return false;
-        }
-
         if (! $this->hasPublicationStatus($record)) {
             return true;
         }
 
-        return $record->status !== PublicationStatus::Archived
-            || $user->role === UserRole::Administrator;
+        return $record->status !== PublicationStatus::Archived;
     }
 
-    public function delete(User $user, Model $record): bool
+    public function delete(Admin $admin, Model $record): bool
     {
-        if ($user->role !== UserRole::Administrator) {
-            return false;
-        }
-
         if ($this->hasPublicationStatus($record) && $record->status !== PublicationStatus::Draft) {
             return false;
         }
@@ -57,29 +47,21 @@ final class CatalogPolicy
         return ! $this->hasDependentRecords($record);
     }
 
-    public function deleteAny(User $user): bool
+    public function deleteAny(Admin $admin): bool
     {
         return false;
     }
 
-    public function publish(User $user, Model $record): bool
+    public function publish(Admin $admin, Model $record): bool
     {
-        return $user->role === UserRole::Administrator
-            && $this->hasPublicationStatus($record)
+        return $this->hasPublicationStatus($record)
             && $record->status === PublicationStatus::Draft;
     }
 
-    public function archive(User $user, Model $record): bool
+    public function archive(Admin $admin, Model $record): bool
     {
-        return $user->role === UserRole::Administrator
-            && $this->hasPublicationStatus($record)
+        return $this->hasPublicationStatus($record)
             && $record->status === PublicationStatus::Published;
-    }
-
-    private function isPanelUser(User $user): bool
-    {
-        return $user->is_admin
-            && in_array($user->role, [UserRole::Administrator, UserRole::Editor], true);
     }
 
     private function hasPublicationStatus(Model $record): bool
