@@ -39,6 +39,20 @@ export const ComposersPage = React.memo(function ComposersPage() {
     );
   }
 
+  if (!composers?.length) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Создатели музыки</div>
+          <h1 className="section-title">Композиторы</h1>
+        </div>
+        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+          Композиторы не найдены
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-8">
       <div className="mb-8">
@@ -47,7 +61,7 @@ export const ComposersPage = React.memo(function ComposersPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {composers?.map((composer, i) => (
+        {composers.map((composer, i) => (
           <motion.div
             key={composer.id}
             initial={{ opacity: 0, y: 20 }}

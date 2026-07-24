@@ -53,6 +53,20 @@ export const CollectionsPage = React.memo(function CollectionsPage() {
     );
   }
 
+  if (!collections?.length) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Подборки и радио</div>
+          <h1 className="section-title">Коллекции</h1>
+        </div>
+        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+          Коллекции не найдены
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-8">
       <div className="mb-8">
@@ -61,7 +75,7 @@ export const CollectionsPage = React.memo(function CollectionsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {collections?.map((collection, i) => (
+        {collections.map((collection, i) => (
           <motion.div
             key={collection.id}
             initial={{ opacity: 0, y: 20 }}

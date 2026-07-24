@@ -135,7 +135,12 @@ export const LibraryPage = React.memo(function LibraryPage() {
             <CardTitle className="text-white">Треки ({filtered.length})</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-1">
+            {filtered.length === 0 ? (
+              <div className="py-12 text-center text-white/40">
+                {search ? 'Ничего не найдено по вашему запросу' : 'В библиотеке пока нет треков'}
+              </div>
+            ) : (
+              <div className="space-y-1">
               {filtered.map((track, i) => (
                 <motion.div
                   key={track.id}
@@ -172,6 +177,7 @@ export const LibraryPage = React.memo(function LibraryPage() {
                 </motion.div>
               ))}
             </div>
+            )}
           </CardContent>
         </Card>
 

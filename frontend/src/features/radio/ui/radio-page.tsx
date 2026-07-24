@@ -45,6 +45,20 @@ export const RadioPage = React.memo(function RadioPage() {
     );
   }
 
+  if (!radioCollections.length) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Прямой эфир</div>
+          <h1 className="section-title">Радиостанции</h1>
+        </div>
+        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+          Радиостанции не найдены
+        </div>
+      </div>
+    );
+  }
+
   const handlePlayCollection = (collection: (typeof radioCollections)[number]) => {
     const collectionTracks = collection.items?.map((item) => item.track).filter(Boolean) || [];
     const firstTrack = collectionTracks[0];
