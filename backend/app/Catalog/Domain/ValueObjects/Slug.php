@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Domain\ValueObjects;
 
 use InvalidArgumentException;
@@ -11,6 +13,11 @@ final readonly class Slug implements Stringable
 
     private function __construct(private string $value) {}
 
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
     public static function fromString(string $value): self
     {
         $normalized = strtolower(trim($value));
@@ -20,10 +27,5 @@ final readonly class Slug implements Stringable
         }
 
         return new self($normalized);
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
     }
 }

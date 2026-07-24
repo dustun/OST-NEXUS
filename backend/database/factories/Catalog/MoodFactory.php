@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories\Catalog;
 
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
@@ -15,9 +17,9 @@ final class MoodFactory extends Factory
     public function definition(): array
     {
         return [
-            'slug' => fake()->unique()->slug(2),
-            'name' => fake()->unique()->word(),
-            'color' => fake()->hexColor(),
+            'slug'        => fake()->unique()->slug(2),
+            'name'        => fake()->unique()->word(),
+            'color'       => fake()->hexColor(),
             'description' => fake()->sentence(),
         ];
     }

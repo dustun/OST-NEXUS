@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Auth\Presentation\Console\Commands;
+declare(strict_types=1);
 
-use App\Auth\Domain\Enums\UserRole;
+namespace App\CLI\Commands;
+
+use App\Auth\Infrastructure\Persistence\Model\Admin;
 use Filament\Commands\MakeUserCommand;
 use Filament\Facades\Filament;
 use Illuminate\Support\Carbon;
@@ -11,23 +13,15 @@ use InvalidArgumentException;
 
 final class CreateAdministratorCommand extends MakeUserCommand
 {
-    protected $signature = 'admin:create';
+    protected $signature   = 'admin:create';
 
-    protected $aliases = [];
+    protected $aliases     = [];
 
     protected $description = 'Создать или обновить администратора из переменных окружения';
 
-    /**
-     * @return array<never>
-     */
-    protected function getOptions(): array
-    {
-        return [];
-    }
-
     public function handle(): int
     {
-        $this->panel = Filament::getPanel('admin', isStrict: false);
+        $this->panel   = Filament::getPanel('admin', isStrict: false);
 
         if (! $this->panel) {
             $this->components->error('Панель Filament с идентификатором admin не зарегистрирована.');
@@ -43,15 +37,15 @@ final class CreateAdministratorCommand extends MakeUserCommand
             return self::FAILURE;
         }
 
-        $administrator = $this->getUserModel()::query()
+        $administrator = Admin::query()
             ->where('email', $data['email'])
             ->first();
-        $created = $administrator === null;
-        $administrator ??= new ($this->getUserModel());
+        $created       = $administrator === null;
+        $administrator ??= new Admin();
 
         $administrator->forceFill($data)->save();
 
-        $action = $created ? 'создан' : 'обновлён';
+        $action        = $created ? 'создан' : 'обновлён';
 
         $this->components->info(
             "Администратор {$data['name']} <{$data['email']}> {$action}.",
@@ -61,19 +55,30 @@ final class CreateAdministratorCommand extends MakeUserCommand
     }
 
     /**
+     * @return array<never>
+     */
+    protected function getOptions(): array
+    {
+        return [];
+    }
+
+    protected function getUserModel(): string
+    {
+        return Admin::class;
+    }
+
+    /**
      * @return array{
      *     name: string,
      *     email: string,
      *     password: string,
      *     email_verified_at: Carbon,
-     *     is_admin: true,
-     *     role: UserRole
      * }
      */
     protected function getUserData(): array
     {
-        $name = trim((string) config('admin.name', ''));
-        $email = strtolower(trim((string) config('admin.email', '')));
+        $name     = trim((string) config('admin.name', ''));
+        $email    = strtolower(trim((string) config('admin.email', '')));
         $password = (string) config('admin.password', '');
 
         if ($name === '') {
@@ -89,12 +94,10 @@ final class CreateAdministratorCommand extends MakeUserCommand
         }
 
         return [
-            'name' => $name,
-            'email' => $email,
-            'password' => Hash::make($password),
+            'name'              => $name,
+            'email'             => $email,
+            'password'          => Hash::make($password),
             'email_verified_at' => now(),
-            'is_admin' => true,
-            'role' => UserRole::Administrator,
         ];
     }
 }

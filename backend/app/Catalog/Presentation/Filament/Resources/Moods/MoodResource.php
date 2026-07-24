@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\Moods;
 
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
 use App\Catalog\Presentation\Filament\Resources\CatalogResource;
 use App\Catalog\Presentation\Filament\Resources\Moods\Pages\ManageMoods;
-use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -19,17 +21,17 @@ use Filament\Tables\Table;
 
 final class MoodResource extends CatalogResource
 {
-    protected static ?string $model = Mood::class;
+    protected static ?string $model                             = Mood::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFaceSmile;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedFaceSmile;
 
-    protected static ?string $modelLabel = 'настроение';
+    protected static ?string $modelLabel                        = 'настроение';
 
-    protected static ?string $pluralModelLabel = 'Настроения';
+    protected static ?string $pluralModelLabel                  = 'Настроения';
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute              = 'name';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort                       = 40;
 
     public static function form(Schema $schema): Schema
     {

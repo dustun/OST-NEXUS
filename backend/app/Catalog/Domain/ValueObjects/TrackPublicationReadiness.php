@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Domain\ValueObjects;
 
 use DomainException;
@@ -53,7 +55,7 @@ final readonly class TrackPublicationReadiness
         }
 
         throw new DomainException(
-            'Трек нельзя опубликовать. Не заполнено: '.implode(', ', $missing).'.',
+            'Трек нельзя опубликовать. Не заполнено: ' . implode(', ', $missing) . '.',
         );
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Providers;
 
-use App\Catalog\Application\Commands\ChangeCatalogPublicationStatus;
-use App\Catalog\Application\Commands\ChangeCatalogPublicationStatusHandler;
 use App\Catalog\Application\Contracts\CatalogPublicationRepository;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;

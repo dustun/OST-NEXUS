@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('games', function (Blueprint $table): void {
@@ -17,7 +18,7 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->date('release_date')->nullable();
             $table->text('cover_image_url')->nullable();
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft')->index();
+            $table->unsignedTinyInteger('status')->default(0)->index();
             $table->timestampTz('published_at')->nullable();
             $table->timestampsTz();
         });
@@ -28,7 +29,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('bio')->nullable();
             $table->text('photo_url')->nullable();
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft')->index();
+            $table->unsignedTinyInteger('status')->default(0)->index();
             $table->timestampTz('published_at')->nullable();
             $table->timestampsTz();
         });
@@ -60,7 +61,7 @@ return new class extends Migration
             $table->unsignedInteger('duration_seconds')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_spoiler')->default(false);
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft')->index();
+            $table->unsignedTinyInteger('status')->default(0)->index();
             $table->timestampTz('published_at')->nullable();
             $table->timestampsTz();
 
@@ -93,12 +94,12 @@ return new class extends Migration
         Schema::create('playback_sources', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('track_id')->constrained()->cascadeOnDelete();
-            $table->enum('provider', ['youtube'])->default('youtube');
+            $table->unsignedTinyInteger('provider')->default(0);
             $table->string('external_id');
             $table->text('source_url')->nullable();
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->boolean('is_primary')->default(false);
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft')->index();
+            $table->unsignedTinyInteger('status')->default(0)->index();
             $table->timestampTz('last_checked_at')->nullable();
             $table->json('metadata')->nullable();
             $table->timestampsTz();

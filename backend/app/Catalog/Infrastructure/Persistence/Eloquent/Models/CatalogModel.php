@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Infrastructure\Persistence\Eloquent\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -11,5 +13,5 @@ abstract class CatalogModel extends Model
 
     public $incrementing = false;
 
-    protected $keyType = 'string';
+    protected $keyType   = 'string';
 }

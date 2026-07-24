@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Catalog\Infrastructure\Persistence\Eloquent;
+declare(strict_types=1);
+
+namespace App\Catalog\Infrastructure\Repositories;
 
 use App\Catalog\Application\Contracts\CatalogPublicationRepository;
 use App\Catalog\Domain\Enums\CatalogItemType;
@@ -43,7 +45,7 @@ final class EloquentCatalogPublicationRepository implements CatalogPublicationRe
         PublicationStatus $target,
         DateTimeImmutable $changedAt,
     ): void {
-        $record = $this->find($type, $id);
+        $record     = $this->find($type, $id);
         $attributes = ['status' => $target];
 
         if ($target === PublicationStatus::Published && $type !== CatalogItemType::PlaybackSource) {
@@ -56,9 +58,9 @@ final class EloquentCatalogPublicationRepository implements CatalogPublicationRe
     private function find(CatalogItemType $type, string $id): CatalogModel
     {
         $model = match ($type) {
-            CatalogItemType::Game => Game::class,
-            CatalogItemType::Track => Track::class,
-            CatalogItemType::Composer => Composer::class,
+            CatalogItemType::Game           => Game::class,
+            CatalogItemType::Track          => Track::class,
+            CatalogItemType::Composer       => Composer::class,
             CatalogItemType::PlaybackSource => PlaybackSource::class,
         };
 

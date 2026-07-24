@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Catalog;
 
 use App\Catalog\Application\Commands\ChangeCatalogPublicationStatus;
 use App\Catalog\Application\Commands\ChangeCatalogPublicationStatusHandler;
-use App\Auth\Domain\Enums\UserRole;
 use App\Catalog\Domain\Enums\CatalogItemType;
 use App\Catalog\Domain\Enums\PublicationStatus;
 use App\Catalog\Presentation\Filament\Resources\Composers\Pages\ManageComposers;
@@ -13,14 +14,13 @@ use App\Catalog\Presentation\Filament\Resources\Moods\Pages\ManageMoods;
 use App\Catalog\Presentation\Filament\Resources\PlaybackSources\Pages\ManagePlaybackSources;
 use App\Catalog\Presentation\Filament\Resources\SceneTypes\Pages\ManageSceneTypes;
 use App\Catalog\Presentation\Filament\Resources\Tracks\Pages\ManageTracks;
-use App\Auth\Infrastructure\Persistence\Model\User;
+use Database\Factories\AdminFactory;
 use Database\Factories\Catalog\ComposerFactory;
 use Database\Factories\Catalog\GameFactory;
 use Database\Factories\Catalog\MoodFactory;
 use Database\Factories\Catalog\PlaybackSourceFactory;
 use Database\Factories\Catalog\SceneTypeFactory;
 use Database\Factories\Catalog\TrackFactory;
-use Database\Factories\UserFactory;
 use DomainException;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -34,15 +34,17 @@ final class CatalogAdminTest extends TestCase
 
     public function test_administrator_can_open_every_catalog_resource(): void
     {
-        $this->actingAs($this->panelUser(UserRole::Administrator));
+        $admin = AdminFactory::new()->create();
+
+        $this->actingAs($admin, 'admin');
 
         foreach ([
-            '/admin/catalog/games',
-            '/admin/catalog/tracks',
-            '/admin/catalog/composers',
-            '/admin/catalog/moods',
-            '/admin/catalog/scene-types',
-            '/admin/catalog/playback-sources',
+            '/admin/games',
+            '/admin/tracks',
+            '/admin/composers',
+            '/admin/moods',
+            '/admin/scene-types',
+            '/admin/playback-sources',
         ] as $url) {
             $this->get($url)->assertOk();
         }
@@ -64,19 +66,13 @@ final class CatalogAdminTest extends TestCase
         }
     }
 
-    public function test_editor_can_edit_drafts_but_cannot_publish_or_delete_them(): void
+    public function test_admin_can_publish_and_delete_draft_records(): void
     {
-        $editor = $this->panelUser(UserRole::Editor);
-        $administrator = $this->panelUser(UserRole::Administrator);
-        $game = GameFactory::new()->create();
+        $admin = AdminFactory::new()->create();
+        $game  = GameFactory::new()->create();
 
-        $this->assertTrue(Gate::forUser($editor)->allows('viewAny', $game::class));
-        $this->assertTrue(Gate::forUser($editor)->allows('update', $game));
-        $this->assertFalse(Gate::forUser($editor)->allows('publish', $game));
-        $this->assertFalse(Gate::forUser($editor)->allows('delete', $game));
-
-        $this->assertTrue(Gate::forUser($administrator)->allows('publish', $game));
-        $this->assertTrue(Gate::forUser($administrator)->allows('delete', $game));
+        $this->assertTrue(Gate::forUser($admin)->allows('publish', $game));
+        $this->assertTrue(Gate::forUser($admin)->allows('delete', $game));
     }
 
     public function test_incomplete_track_cannot_be_published(): void
@@ -103,12 +99,12 @@ final class CatalogAdminTest extends TestCase
 
     public function test_complete_track_can_be_published_and_archived(): void
     {
-        $game = GameFactory::new()->create();
-        $composer = ComposerFactory::new()->create();
-        $track = TrackFactory::new()->create(['game_id' => $game->getKey()]);
-        $mood = MoodFactory::new()->create();
+        $game      = GameFactory::new()->create();
+        $composer  = ComposerFactory::new()->create();
+        $track     = TrackFactory::new()->create(['game_id' => $game->getKey()]);
+        $mood      = MoodFactory::new()->create();
         $sceneType = SceneTypeFactory::new()->create();
-        $source = PlaybackSourceFactory::new()->create(['track_id' => $track->getKey()]);
+        $source    = PlaybackSourceFactory::new()->create(['track_id' => $track->getKey()]);
 
         $track->composers()->attach($composer, ['role' => 'composer']);
         $track->moods()->attach($mood);
@@ -127,14 +123,6 @@ final class CatalogAdminTest extends TestCase
         $this->changeStatus(CatalogItemType::Track, $track->getKey(), PublicationStatus::Archived);
 
         $this->assertSame(PublicationStatus::Archived, $track->refresh()->status);
-    }
-
-    private function panelUser(UserRole $role): User
-    {
-        return UserFactory::new()->create([
-            'is_admin' => true,
-            'role' => $role,
-        ]);
     }
 
     private function changeStatus(

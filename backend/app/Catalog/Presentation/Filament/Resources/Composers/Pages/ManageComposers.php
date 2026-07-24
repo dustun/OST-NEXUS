@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\Composers\Pages;
 
 use App\Catalog\Presentation\Filament\Resources\Composers\ComposerResource;

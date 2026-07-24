@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Domain\Entities;
 
 use App\Catalog\Domain\Enums\PublicationStatus;
@@ -25,6 +27,17 @@ final class Game
             title: self::validateTitle($title),
             status: PublicationStatus::Draft,
         );
+    }
+
+    private static function validateTitle(string $title): string
+    {
+        $title = trim($title);
+
+        if ($title === '') {
+            throw new InvalidArgumentException('Название игры не может быть пустым.');
+        }
+
+        return $title;
     }
 
     public function publish(): void
@@ -67,16 +80,5 @@ final class Game
     public function status(): PublicationStatus
     {
         return $this->status;
-    }
-
-    private static function validateTitle(string $title): string
-    {
-        $title = trim($title);
-
-        if ($title === '') {
-            throw new InvalidArgumentException('Название игры не может быть пустым.');
-        }
-
-        return $title;
     }
 }

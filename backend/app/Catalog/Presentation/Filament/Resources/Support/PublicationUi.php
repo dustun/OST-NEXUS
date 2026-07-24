@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Presentation\Filament\Resources\Support;
 
 use App\Catalog\Application\Commands\ChangeCatalogPublicationStatus;
@@ -46,10 +48,10 @@ final class PublicationUi
                 ->requiresConfirmation()
                 ->modalHeading('Опубликовать запись?')
                 ->authorize('publish')
-                ->visible(fn (Model $record): bool => $record->getAttribute('status') === PublicationStatus::Published
+                ->visible(fn(Model $record): bool => $record->getAttribute('status') === PublicationStatus::Published
                     ? false
                     : $record->getAttribute('status') === PublicationStatus::Draft)
-                ->action(fn (Model $record) => self::changeStatus(
+                ->action(fn(Model $record) => self::changeStatus(
                     record: $record,
                     type: $type,
                     target: PublicationStatus::Published,
@@ -61,8 +63,8 @@ final class PublicationUi
                 ->requiresConfirmation()
                 ->modalHeading('Архивировать запись?')
                 ->authorize('archive')
-                ->visible(fn (Model $record): bool => $record->getAttribute('status') === PublicationStatus::Published)
-                ->action(fn (Model $record) => self::changeStatus(
+                ->visible(fn(Model $record): bool => $record->getAttribute('status') === PublicationStatus::Published)
+                ->action(fn(Model $record) => self::changeStatus(
                     record: $record,
                     type: $type,
                     target: PublicationStatus::Archived,
@@ -76,27 +78,27 @@ final class PublicationUi
     public static function options(): array
     {
         return [
-            PublicationStatus::Draft->value => 'Черновик',
+            PublicationStatus::Draft->value     => 'Черновик',
             PublicationStatus::Published->value => 'Опубликовано',
-            PublicationStatus::Archived->value => 'В архиве',
+            PublicationStatus::Archived->value  => 'В архиве',
         ];
     }
 
-    public static function label(PublicationStatus|int $status): string
+    public static function label(PublicationStatus | int $status): string
     {
         $status = is_int($status) ? PublicationStatus::from($status) : $status;
 
         return self::options()[$status->value];
     }
 
-    public static function color(PublicationStatus|int $status): string
+    public static function color(PublicationStatus | int $status): string
     {
         $status = is_int($status) ? PublicationStatus::from($status) : $status;
 
         return match ($status) {
-            PublicationStatus::Draft => 'gray',
+            PublicationStatus::Draft     => 'gray',
             PublicationStatus::Published => 'success',
-            PublicationStatus::Archived => 'warning',
+            PublicationStatus::Archived  => 'warning',
         };
     }
 

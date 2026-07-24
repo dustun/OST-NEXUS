@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Catalog\Infrastructure\Persistence\Eloquent\Models;
 
 use App\Catalog\Domain\Enums\PlaybackProvider;
@@ -20,19 +22,19 @@ final class PlaybackSource extends CatalogModel
         'metadata',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'provider' => PlaybackProvider::class,
-            'is_primary' => 'boolean',
-            'status' => PublicationStatus::class,
-            'last_checked_at' => 'immutable_datetime',
-            'metadata' => 'array',
-        ];
-    }
-
     public function track(): BelongsTo
     {
         return $this->belongsTo(Track::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'provider'        => PlaybackProvider::class,
+            'is_primary'      => 'boolean',
+            'status'          => PublicationStatus::class,
+            'last_checked_at' => 'immutable_datetime',
+            'metadata'        => 'array',
+        ];
     }
 }
