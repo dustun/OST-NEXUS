@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/navigation/sidebar';
 import { MobileNav } from '@/components/navigation/mobile-nav';
 import { CassetteDeck } from '@/components/player/cassette-deck';
 import { Scanlines, Vignette } from '@/components/effects';
-import { Menu, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const SIDEBAR_MIN = 200;
@@ -22,18 +22,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);
 
-  const openSidebar = useCallback(() => {
-    setSidebarOpen(true);
-    setMobileMounted(true);
-  }, []);
-
   const closeSidebar = useCallback(() => {
     setSidebarOpen(false);
     setMobileMounted(false);
   }, []);
 
-  const toggleSidebar = useCallback(() => {
-    setSidebarOpen((prev) => !prev);
+  const openSidebar = useCallback(() => {
+    setSidebarOpen(true);
+    setMobileMounted(true);
   }, []);
 
   const handleResizeStart = useCallback((e: React.MouseEvent) => {
@@ -124,29 +120,31 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Desktop toggle button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={toggleSidebar}
-        className="hidden lg:flex fixed top-4 left-4 z-50 h-9 w-9 text-white/70 hover:text-white"
-      >
-        {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </Button>
+      {/* Desktop close button (X only, no Menu) */}
+      {sidebarOpen && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={closeSidebar}
+          className="hidden lg:flex fixed top-4 left-4 z-50 h-9 w-9 text-white/70 hover:text-white"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      )}
 
       {/* Mobile top bar */}
       <div className="lg:hidden sticky top-0 z-30 border-b border-white/5 bg-[#0B0F1A]/90 backdrop-blur-xl">
         <div className="flex items-center justify-between px-4 py-3">
+          <div className="w-9" />
+          <span className="font-bold tracking-wider text-white">OST NEXUS</span>
           <Button
             variant="ghost"
             size="icon"
             onClick={openSidebar}
             className="h-9 w-9 text-white/70 hover:text-white"
           >
-            <Menu className="h-5 w-5" />
+            <X className="h-5 w-5" />
           </Button>
-          <span className="font-bold tracking-wider text-white">OST NEXUS</span>
-          <div className="w-9" />
         </div>
       </div>
 
