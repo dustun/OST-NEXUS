@@ -21,6 +21,8 @@ Backend предоставляет REST API, редакторскую панел
 ~~~bash
 task setup
 task dev
+task shell
+task admin:create
 task backend:test
 task backend:check
 task backend:format
@@ -28,5 +30,7 @@ task migrate
 ~~~
 
 Публичный API доступен по адресу <http://localhost:8090/api/v1>, Filament — <http://localhost:8090/admin>.
+
+**task shell** открывает Bash в отдельном PHP CLI-контейнере. **task admin:create** читает учётные данные из **backend/.env** и идемпотентно создаёт или обновляет администратора. Подробности находятся в [руководстве администратора](../docs/administration.md).
 
 Новые бизнес-правила должны появляться в **Domain**, а не в контроллерах, Eloquent-моделях или ресурсах Filament.

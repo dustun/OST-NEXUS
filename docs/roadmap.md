@@ -20,7 +20,7 @@
 
 Предлагаемые ветки:
 
-- **feature/catalog-schema** — доменная модель Catalog, миграции, ограничения, фабрики и начальные данные;
+- **feature/catalog-schema** — доменная модель Catalog, миграции, ограничения, фабрики и начальные данные — текущая ветка;
 - **feature/catalog-admin** — ресурсы Filament и редакторский процесс;
 - **feature/catalog-api** — публичные read-only маршруты игр и треков;
 - **feature/frontend-catalog** — FSD-сущности, каталог, навигация и API-клиент;

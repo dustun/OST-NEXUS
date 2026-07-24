@@ -18,5 +18,29 @@ services:
       timeout: 3s
       retries: 20
 
+  backend-cli:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: docker/php-cli/Dockerfile
+    init: true
+    working_dir: /app
+    env_file:
+      - backend/.env
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-ost_nexus}
+      DB_USERNAME: ${POSTGRES_USER:-ost_nexus}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-ost_nexus_local}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
 volumes:
   postgres_data:
