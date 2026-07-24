@@ -139,7 +139,7 @@ final class CatalogSeeder extends Seeder
                         'source_url' => 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
                         'sort_order' => 0,
                         'is_primary' => true,
-                        'status'     => PublicationStatus::Published,
+                        'status'     => PublicationStatus::Published->value,
                         'metadata'   => [
                             'purpose' => 'YouTube IFrame API demo source',
                         ],
