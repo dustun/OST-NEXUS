@@ -1,7 +1,13 @@
 import { create } from 'zustand';
-import { Track, RadioStation, PlayerState } from '@/types';
+import { Track, Collection } from '@/types';
 
-interface PlayerStore extends PlayerState {
+interface PlayerStore {
+  currentTrack: Track | null;
+  isPlaying: boolean;
+  progress: number;
+  duration: number;
+  volume: number;
+  station: Collection | null;
   queue: Track[];
   queueIndex: number;
   isShuffle: boolean;
@@ -11,7 +17,7 @@ interface PlayerStore extends PlayerState {
   setProgress: (progress: number) => void;
   setDuration: (duration: number) => void;
   setVolume: (volume: number) => void;
-  setStation: (station: RadioStation | null) => void;
+  setStation: (station: Collection | null) => void;
   play: (track: Track) => void;
   pause: () => void;
   togglePlay: () => void;

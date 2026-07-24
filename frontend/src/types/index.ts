@@ -82,11 +82,39 @@ export interface RadioStation {
   color: string;
 }
 
+export interface Collection {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  type: 'radio' | 'playlist' | 'favorites' | 'mix';
+  visibility: 'public' | 'unlisted' | 'private';
+  ownerType: string | null;
+  ownerId: string | null;
+  coverImage: string;
+  isLive: boolean;
+  frequency: string;
+  color: string;
+  currentlyPlayingTrackId: string | null;
+  status: 'draft' | 'published' | 'archived';
+  publishedAt: string | null;
+  items: CollectionItem[];
+}
+
+export interface CollectionItem {
+  id: string;
+  collectionId: string;
+  trackId: string;
+  track: Track;
+  sortOrder: number;
+  note: string | null;
+}
+
 export interface PlayerState {
   currentTrack: Track | null;
   isPlaying: boolean;
   progress: number;
   duration: number;
   volume: number;
-  station: RadioStation | null;
+  station: Collection | null;
 }

@@ -8,6 +8,8 @@ export const routes = {
   tracks: '/tracks',
   track: (id: string) => `/tracks/${id}`,
   radio: '/radio',
+  collections: '/collections',
+  collection: (id: string) => `/collections/${id}`,
   composers: '/composers',
   composer: (id: string) => `/composers/${id}`,
   admin: '/admin',

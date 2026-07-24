@@ -1,4 +1,4 @@
-import { Game, Track, Composer, Mood, SceneType, RadioStation } from '@/types';
+import { Game, Track, Composer, Mood, SceneType, Collection, CollectionItem } from '@/types';
 
 export const moods: Mood[] = [
   { id: '1', name: 'Созерцательное', slug: 'contemplative', color: '#28F0FF', description: 'Для исследования мира' },
@@ -108,35 +108,66 @@ export const tracks: Track[] = [
 
 games[0].tracks = tracks;
 
-export const radioStations: RadioStation[] = [
+export const collections: Collection[] = [
   {
     id: '1',
-    name: 'NEXUS FM',
+    slug: 'nexus-fm',
+    title: 'NEXUS FM',
     description: 'Лучшие саундтреки из игровых миров',
-    frequency: '87.5 FM',
-    genre: 'Synthwave / Ambient',
-    currentlyPlaying: tracks[0],
+    type: 'radio',
+    visibility: 'public',
+    ownerType: null,
+    ownerId: null,
+    coverImage: '',
     isLive: true,
+    frequency: '87.5 FM',
     color: '#8B5CF6',
+    currentlyPlayingTrackId: '1',
+    status: 'published',
+    publishedAt: '2026-07-23T10:00:00Z',
+    items: [
+      { id: 'ci1', collectionId: '1', trackId: '1', track: tracks[0], sortOrder: 1, note: null },
+      { id: 'ci2', collectionId: '1', trackId: '2', track: tracks[1], sortOrder: 2, note: null },
+    ],
   },
   {
     id: '2',
-    name: 'Boss Battle Radio',
+    slug: 'boss-battle-radio',
+    title: 'Boss Battle Radio',
     description: 'Эпические саундтреки из битв с боссами',
-    frequency: '92.3 FM',
-    genre: 'Orchestral / Rock',
-    currentlyPlaying: tracks[2],
+    type: 'radio',
+    visibility: 'public',
+    ownerType: null,
+    ownerId: null,
+    coverImage: '',
     isLive: true,
+    frequency: '92.3 FM',
     color: '#FF4FD8',
+    currentlyPlayingTrackId: '3',
+    status: 'published',
+    publishedAt: '2026-07-23T10:00:00Z',
+    items: [
+      { id: 'ci3', collectionId: '2', trackId: '3', track: tracks[2], sortOrder: 1, note: null },
+    ],
   },
   {
     id: '3',
-    name: 'Exploration Wave',
+    slug: 'exploration-wave',
+    title: 'Exploration Wave',
     description: 'Музыка для исследования игровых миров',
-    frequency: '104.7 FM',
-    genre: 'Ambient / Electronic',
-    currentlyPlaying: tracks[1],
+    type: 'radio',
+    visibility: 'public',
+    ownerType: null,
+    ownerId: null,
+    coverImage: '',
     isLive: false,
+    frequency: '104.7 FM',
     color: '#28F0FF',
+    currentlyPlayingTrackId: '2',
+    status: 'published',
+    publishedAt: '2026-07-23T10:00:00Z',
+    items: [
+      { id: 'ci4', collectionId: '3', trackId: '2', track: tracks[1], sortOrder: 1, note: null },
+    ],
   },
 ];

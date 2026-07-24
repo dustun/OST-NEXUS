@@ -11,7 +11,7 @@ export function GamesPage() {
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-8">
       <div className="mb-8">
-        <div className="eyebrow">Каталог игровых миров</div>
+        <div className="section-eyebrow">Каталог игровых миров</div>
         <h1 className="section-title">Игры</h1>
       </div>
 
@@ -24,23 +24,26 @@ export function GamesPage() {
             transition={{ delay: i * 0.1 }}
           >
             <Link href={routes.game(game.slug)}>
-              <Card className="card-glow group cursor-pointer border-white/10 bg-gradient-to-br from-white/5 to-transparent transition-all duration-300 hover:border-white/20">
-                <div className="aspect-video w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-[#a96cff]/20 to-[#56b7ff]/20">
-                  <div className="flex h-full items-center justify-center">
-                    <Gamepad2 className="h-16 w-16 text-white/20" />
-                  </div>
+              <Card className="card-panel group cursor-pointer border-white/10">
+                <div className="aspect-video w-full rounded-t-xl bg-gradient-to-br from-[#8B5CF6]/20 to-[#28F0FF]/20 flex items-center justify-center">
+                  <Gamepad2 className="h-16 w-16 text-white/20" />
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-lg font-bold text-white group-hover:text-[#cf9cff] transition-colors">
+                  <CardTitle className="text-lg font-bold text-white group-hover:text-[#A78BFA] transition-colors">
                     {game.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between text-xs text-white/50">
-                    <span>{game.genres.join(' / ')}</span>
-                    <span>{game.releaseDate}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-2">
+                      {game.genres.slice(0, 2).map((genre) => (
+                        <span key={genre} className="tag-genre badge text-[10px]">
+                          {genre}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-xs text-white/40">{game.releaseDate}</span>
                   </div>
-                  <p className="mt-2 line-clamp-2 text-sm text-white/60">{game.summary}</p>
                 </CardContent>
               </Card>
             </Link>
