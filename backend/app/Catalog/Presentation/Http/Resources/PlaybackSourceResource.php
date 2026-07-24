@@ -14,12 +14,12 @@ final class PlaybackSourceResource extends JsonResource
         return [
             'id' => $this->id,
             'track_id' => $this->track_id,
-            'provider' => $this->provider?->label(),
+            'provider' => strtolower($this->provider?->name ?? ''),
             'external_id' => $this->external_id,
             'source_url' => $this->source_url,
             'sort_order' => $this->sort_order,
             'is_primary' => $this->is_primary,
-            'status' => $this->status?->label(),
+            'status' => strtolower($this->status?->name ?? ''),
             'last_checked_at' => $this->last_checked_at,
             'metadata' => $this->metadata,
         ];

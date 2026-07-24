@@ -17,7 +17,7 @@ final class ComposerResource extends JsonResource
             'name' => $this->name,
             'bio' => $this->bio,
             'photo_url' => $this->photo_url,
-            'status' => $this->status?->label(),
+            'status' => strtolower($this->status?->name ?? ''),
             'published_at' => $this->published_at,
         ];
     }
