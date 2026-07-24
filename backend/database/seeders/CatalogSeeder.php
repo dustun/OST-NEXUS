@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Catalog\Domain\Enums\CollectionType;
+use App\Catalog\Domain\Enums\CollectionVisibility;
 use App\Catalog\Domain\Enums\PlaybackProvider;
 use App\Catalog\Domain\Enums\PublicationStatus;
+use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Collection;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Composer;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Game;
 use App\Catalog\Infrastructure\Persistence\Eloquent\Models\Mood;
@@ -141,6 +144,31 @@ final class CatalogSeeder extends Seeder
                             'purpose' => 'YouTube IFrame API demo source',
                         ],
                     ],
+                );
+            }
+
+            $collection = Collection::query()->updateOrCreate(
+                ['slug' => 'nexus-fm'],
+                [
+                    'title'       => 'NEXUS FM',
+                    'description' => 'Лучшие саундтреки из игровых миров',
+                    'type'        => CollectionType::Radio->value,
+                    'visibility'  => CollectionVisibility::Public->value,
+                    'is_live'     => true,
+                    'frequency'   => '87.5 FM',
+                    'color'       => '#8B5CF6',
+                    'status'      => PublicationStatus::Published,
+                    'published_at'=> $publishedAt,
+                ],
+            );
+
+            foreach ($tracks as $index => $trackData) {
+                $track = Track::query()->where('slug', $trackData['slug'])->first();
+                if (!$track) continue;
+
+                $collection->items()->updateOrCreate(
+                    ['collection_id' => $collection->getKey(), 'track_id' => $track->getKey()],
+                    ['sort_order' => $index + 1],
                 );
             }
         });
