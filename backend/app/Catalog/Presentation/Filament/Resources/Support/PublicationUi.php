@@ -23,8 +23,8 @@ final class PublicationUi
         return TextColumn::make('status')
             ->label('Статус')
             ->badge()
-            ->formatStateUsing(self::label(...))
-            ->color(self::color(...))
+            ->formatStateUsing(fn ($status) => self::label($status))
+            ->color(fn ($status) => self::color($status))
             ->sortable();
     }
 
