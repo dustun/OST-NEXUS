@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { routes } from '@/shared/config';
+import { UrlPlayDialog } from '@/components/player/url-play-dialog';
 
 const navItems = [
   { href: routes.home, label: 'Главная', icon: Play },
@@ -115,6 +116,10 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
           </div>
         </div>
       )}
+
+      <div className="border-t border-white/5 p-3">
+        <UrlPlayDialog />
+      </div>
 
       {isCollapsed && onExpand && (
         <div className="border-t border-white/5 p-3 flex justify-center">
