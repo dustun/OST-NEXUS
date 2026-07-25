@@ -38,4 +38,30 @@ final class TrackController extends Controller
 
         return response()->json(new TrackResource($track), 200);
     }
+
+    public function play(string $id): JsonResponse
+    {
+        $track = Track::query()
+            ->where('id', $id)
+            ->where('status', PublicationStatus::Published->value)
+            ->with(['game', 'composers', 'moods', 'sceneTypes', 'playbackSources'])
+            ->firstOrFail();
+
+        $primarySource = $track->playbackSources
+            ->where('is_primary', true)
+            ->first();
+
+        if (!$primarySource) {
+            return response()->json(['error' => 'No primary playback source found'], 404);
+        }
+
+        return response()->json([
+            'track' => new TrackResource($track),
+            'source' => [
+                'provider' => $primarySource->provider->name,
+                'source_url' => $primarySource->source_url,
+                'external_id' => $primarySource->external_id,
+            ],
+        ], 200);
+    }
 }

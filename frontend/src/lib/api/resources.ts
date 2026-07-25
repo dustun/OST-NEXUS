@@ -13,6 +13,13 @@ export const api = {
       return fetchJSON<unknown[]>(`/tracks${qs}`).then((data) => (Array.isArray(data) ? data.map((item: unknown) => mappers.track(item as Record<string, unknown>)) : []));
     },
     show: (id: string) => fetchJSON<unknown>(`/tracks/${id}`).then((data) => mappers.track(data as Record<string, unknown>)),
+    play: (id: string) => fetchJSON<unknown>(`/tracks/${id}/play`).then((data) => {
+      const raw = data as Record<string, unknown>;
+      return {
+        track: mappers.track(raw.track as Record<string, unknown>),
+        source: raw.source as { provider: string; source_url: string; external_id: string },
+      };
+    }),
   },
   collections: {
     list: () => fetchJSON<unknown[]>(`/collections`).then((data) => (Array.isArray(data) ? data.map((item: unknown) => mappers.collection(item as Record<string, unknown>)) : [])),

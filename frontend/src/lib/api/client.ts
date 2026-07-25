@@ -10,6 +10,7 @@ export type {
   CollectionItem,
   PlaybackSource,
   PlayerState,
+  TrackPlayResult,
 } from '@/types';
 
 export async function fetchJSON<T>(path: string, options?: RequestInit): Promise<T> {
