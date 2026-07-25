@@ -54,7 +54,7 @@ export function TrendingSection() {
                       <div className="text-white/30 font-mono text-xs">{String(i + 1).padStart(2, '0')}</div>
                       <div className="min-w-0">
                         <div className="font-medium text-white truncate">{track.title}</div>
-                        <div className="text-xs text-white/50 truncate">{track.game.title}</div>
+                        <div className="text-xs text-white/50 truncate">{track.game?.title || track.title}</div>
                       </div>
                       <div className="hidden md:flex items-center gap-1">
                         {track.moods?.slice(0, 2).map((mood) => (

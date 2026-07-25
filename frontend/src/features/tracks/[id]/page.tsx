@@ -60,7 +60,7 @@ export default function TrackPage() {
                 </Button>
                 <div>
                   <div className="font-bold text-white">{track.title}</div>
-                  <div className="text-sm text-white/50">{track.game.title}</div>
+                  <div className="text-sm text-white/50">{track.game?.title || track.title}</div>
                 </div>
               </div>
             </CardContent>
@@ -73,7 +73,7 @@ export default function TrackPage() {
               <div className="space-y-4">
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Игра</div>
-                  <div className="text-sm text-white">{track.game.title}</div>
+                  <div className="text-sm text-white">{track.game?.title || track.title}</div>
                 </div>
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Длительность</div>

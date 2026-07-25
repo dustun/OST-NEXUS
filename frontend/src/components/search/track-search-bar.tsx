@@ -24,7 +24,7 @@ export function TrackSearchBar() {
     return tracks.filter(
       (t) =>
         t.title.toLowerCase().includes(q) ||
-        t.game.title.toLowerCase().includes(q)
+        (t.game?.title || '').toLowerCase().includes(q)
     );
   }, [tracks, query]);
 
@@ -87,7 +87,7 @@ export function TrackSearchBar() {
             >
               <div className="min-w-0">
                 <div className="font-medium text-white">{track.title}</div>
-                <div className="text-xs text-white/50">{track.game.title}</div>
+                <div className="text-xs text-white/50">{track.game?.title || track.title}</div>
               </div>
               <Button
                 variant="ghost"

@@ -87,7 +87,7 @@ export function PixelRadio() {
           </div>
           {currentTrack && (
             <div className="mt-1 truncate text-[10px] text-white/50">
-              {currentTrack.game.title}
+              {currentTrack.game?.title || currentTrack.title}
             </div>
           )}
         </div>

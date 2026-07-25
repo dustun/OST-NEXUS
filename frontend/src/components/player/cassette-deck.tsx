@@ -125,9 +125,9 @@ export function CassetteDeck() {
                   <div className="truncate text-sm font-bold text-white">
                     {currentTrack.title}
                   </div>
-                  <div className="truncate text-xs text-white/50">
-                    {currentTrack.game.title}
-                  </div>
+                   <div className="truncate text-xs text-white/50">
+                     {currentTrack.game?.title || currentTrack.title}
+                   </div>
                   {station && (
                     <div className="mt-1 flex items-center gap-1">
                       <Radio className="h-3 w-3 text-[#8B5CF6]" />

@@ -61,9 +61,9 @@ export function PlayerDock({
                   <div className="truncate text-sm font-bold text-white">
                     {state.currentTrack.title}
                   </div>
-                  <div className="truncate text-xs text-white/50">
-                    {state.currentTrack.game.title}
-                  </div>
+                   <div className="truncate text-xs text-white/50">
+                     {state.currentTrack.game?.title || state.currentTrack.title}
+                   </div>
                 </div>
               </div>
 
