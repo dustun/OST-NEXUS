@@ -5,17 +5,18 @@ import { useParams } from 'next/navigation';
 import { Play } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useTrack, useTracks } from '@/lib/hooks/use-catalog';
+import { useTrack, useTracks, useTrackPlay } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
 export default function TrackPage() {
   const params = useParams();
   const id = params.id as string;
   const { data: track, isLoading, error } = useTrack(id);
+  const { data: playData, isLoading: isPlaying } = useTrackPlay(id);
   const { data: tracks } = useTracks();
   const { play, setQueue } = usePlayerStore();
 
-  if (isLoading) {
+  if (isLoading || isPlaying) {
     return (
       <div className="mx-auto max-w-[1600px] px-4 py-8">
         <div className="mb-8 animate-pulse">
@@ -79,6 +80,12 @@ export default function TrackPage() {
                   <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Длительность</div>
                   <div className="text-sm text-white font-mono">
                     {Math.floor(track.durationSeconds / 60)}:{String(track.durationSeconds % 60).padStart(2, '0')}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Источник</div>
+                  <div className="text-sm text-white">
+                    {playData?.source.provider || 'Загрузка...'}
                   </div>
                 </div>
                 <div>
