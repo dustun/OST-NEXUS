@@ -18,7 +18,7 @@ final class GameController extends Controller
         $games = Game::query()
             ->where('status', PublicationStatus::Published->value)
             ->orderByDesc('published_at')
-            ->get(['id', 'slug', 'title', 'original_title', 'cover_image_url', 'release_date', 'summary']);
+            ->get(['id', 'slug', 'title', 'original_title', 'cover_image_url', 'release_date', 'summary', 'status', 'published_at']);
 
         return response()->json(GameResource::collection($games), 200);
     }
