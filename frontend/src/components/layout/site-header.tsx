@@ -38,12 +38,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link
-            href="/admin"
-            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-bold text-white/70 transition-colors hover:border-white/20 hover:text-white"
-          >
-            ADMIN
-          </Link>
         </div>
       </div>
     </header>

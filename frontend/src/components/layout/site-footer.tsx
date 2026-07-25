@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { routes } from '@/shared/config';
 
 export function SiteFooter() {
   return (
@@ -10,13 +11,19 @@ export function SiteFooter() {
             <span className="text-sm font-bold tracking-wider text-white/80">OST NEXUS</span>
           </div>
           <div className="flex gap-6">
-            {['Игры', 'Треки', 'Радио', 'Композиторы'].map((item) => (
+            {[
+              { label: 'Игры', href: routes.games },
+              { label: 'Треки', href: routes.tracks },
+              { label: 'Радио', href: routes.radio },
+              { label: 'Композиторы', href: routes.composers },
+              { label: 'Библиотека', href: routes.library },
+            ].map((item) => (
               <Link
-                key={item}
-                href="#"
+                key={item.href}
+                href={item.href}
                 className="text-xs text-white/40 transition-colors hover:text-white"
               >
-                {item}
+                {item.label}
               </Link>
             ))}
           </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Search } from 'lucide-react';
@@ -10,7 +11,7 @@ import { useTracks } from '@/lib/hooks/use-catalog';
 import type { Track } from '@/types';
 import { usePlayerStore } from '@/stores/player-store';
 
-export function TracksPage() {
+export const TracksPage = React.memo(function TracksPage() {
   const [search, setSearch] = useState('');
   const { data: tracks, isLoading, error } = useTracks();
   const { play, setQueue } = usePlayerStore();
@@ -22,7 +23,7 @@ export function TracksPage() {
     return tracks.filter(
       (t) =>
         t.title.toLowerCase().includes(q) ||
-        t.game.title.toLowerCase().includes(q) ||
+        (t.game?.title || '').toLowerCase().includes(q) ||
         t.moods?.some((m) => m.name.toLowerCase().includes(q))
     );
   }, [tracks, search]);
@@ -101,7 +102,7 @@ export function TracksPage() {
                       <div className="text-white/30 font-mono text-xs">{String(i + 1).padStart(2, '0')}</div>
                       <div className="min-w-0">
                         <div className="font-medium text-white truncate">{track.title}</div>
-                        <div className="text-xs text-white/50 truncate">{track.game.title}</div>
+                        <div className="text-xs text-white/50 truncate">{track.game?.title || track.title}</div>
                       </div>
                       <div className="hidden md:flex items-center gap-1">
                         {track.moods?.slice(0, 2).map((mood) => (
@@ -133,4 +134,4 @@ export function TracksPage() {
       </div>
     </div>
   );
-}
+});

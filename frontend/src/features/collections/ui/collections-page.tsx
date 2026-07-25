@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FolderOpen, Radio } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import type { Collection } from '@/types';
 import { useCollections } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
-export function CollectionsPage() {
+export const CollectionsPage = React.memo(function CollectionsPage() {
   const { data: collections, isLoading, error } = useCollections();
   const { play, setQueue, setStation } = usePlayerStore();
 
@@ -52,6 +53,20 @@ export function CollectionsPage() {
     );
   }
 
+  if (!collections?.length) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Подборки и радио</div>
+          <h1 className="section-title">Коллекции</h1>
+        </div>
+        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+          Коллекции не найдены
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-8">
       <div className="mb-8">
@@ -60,7 +75,7 @@ export function CollectionsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {collections?.map((collection, i) => (
+        {collections.map((collection, i) => (
           <motion.div
             key={collection.id}
             initial={{ opacity: 0, y: 20 }}
@@ -113,4 +128,4 @@ export function CollectionsPage() {
       </div>
     </div>
   );
-}
+});

@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Disc } from 'lucide-react';
@@ -7,7 +8,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { useComposers } from '@/lib/hooks/use-catalog';
 import { routes } from '@/shared/config';
 
-export function ComposersPage() {
+export const ComposersPage = React.memo(function ComposersPage() {
   const { data: composers, isLoading, error } = useComposers();
 
   if (isLoading) {
@@ -38,6 +39,20 @@ export function ComposersPage() {
     );
   }
 
+  if (!composers?.length) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Создатели музыки</div>
+          <h1 className="section-title">Композиторы</h1>
+        </div>
+        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+          Композиторы не найдены
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-8">
       <div className="mb-8">
@@ -46,7 +61,7 @@ export function ComposersPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {composers?.map((composer, i) => (
+        {composers.map((composer, i) => (
           <motion.div
             key={composer.id}
             initial={{ opacity: 0, y: 20 }}
@@ -73,4 +88,4 @@ export function ComposersPage() {
       </div>
     </div>
   );
-}
+});

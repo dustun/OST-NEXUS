@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { AppShell } from "@/components/layout/app-shell";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-full`}>
         <QueryProvider>
           <TooltipProvider>
-            {children}
+            <AppShell>
+              {children}
+            </AppShell>
           </TooltipProvider>
         </QueryProvider>
       </body>
