@@ -118,3 +118,12 @@ export interface PlayerState {
   volume: number;
   station: Collection | null;
 }
+
+export interface TrackPlayResult {
+  track: Track;
+  source: {
+    provider: string;
+    source_url: string;
+    external_id: string;
+  };
+}
