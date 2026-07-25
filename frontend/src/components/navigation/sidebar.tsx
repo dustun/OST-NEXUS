@@ -52,11 +52,11 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
       <div className="flex h-16 items-center justify-between px-4 border-b border-white/5">
         <Link href={routes.home} className="flex items-center gap-3">
           <motion.div
-            className="h-10 w-10 flex-shrink-0 rounded-xl border-2 border-[#8B5CF6] bg-gradient-to-br from-[#8B5CF6] to-[#28F0FF] flex items-center justify-center"
+            className="h-10 w-10 flex-shrink-0 rounded-lg border-2 border-[#8B5CF6] bg-gradient-to-br from-[#8B5CF6] to-[#28F0FF] flex items-center justify-center"
             animate={{ boxShadow: ['0 0 12px #8B5CF6', '0 0 30px #8B5CF6', '0 0 12px #8B5CF6'] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <span className="text-white font-bold text-sm">NX</span>
+            <span className="text-white font-bold text-sm pixel-border">NX</span>
           </motion.div>
           {!isCollapsed && (
             <span className="font-bold text-lg tracking-wider text-white">OST NEXUS</span>
@@ -65,9 +65,9 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
         {onClose && !isCollapsed && (
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-white/60 hover:bg-white/5 hover:text-white transition-colors pixel-border"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
         )}
       </div>
@@ -81,17 +81,17 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 rounded-xl transition-all ${
+                className={`flex items-center gap-3 rounded-lg transition-all ${
                   isCollapsed ? 'px-3 py-3 justify-center' : 'px-4 py-3'
                 } ${
                   isActive
-                    ? 'bg-[#8B5CF6]/15 text-[#A78BFA]'
-                    : 'text-white/70 hover:bg-white/5 hover:text-white'
+                    ? 'bg-[#8B5CF6]/20 text-[#A78BFA] pixel-border'
+                    : 'text-white/60 hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <item.icon className={`h-6 w-6 ${isCollapsed ? 'mx-auto' : ''}`} />
+                <item.icon className={`h-5 w-5 ${isCollapsed ? 'mx-auto' : ''}`} />
                 {!isCollapsed && (
-                  <span className="text-[15px] font-medium">{item.label}</span>
+                  <span className="text-[15px] font-medium tracking-wider">{item.label}</span>
                 )}
               </Link>
             );
