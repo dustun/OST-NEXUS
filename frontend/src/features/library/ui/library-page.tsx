@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -14,7 +15,7 @@ import { usePlayerStore } from '@/stores/player-store';
 
 type FilterType = 'all' | 'game' | 'mood';
 
-export function LibraryPage() {
+export const LibraryPage = React.memo(function LibraryPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
@@ -33,7 +34,7 @@ export function LibraryPage() {
       result = result.filter(
         (t) =>
           t.title.toLowerCase().includes(q) ||
-          t.game.title.toLowerCase().includes(q) ||
+          (t.game?.title || '').toLowerCase().includes(q) ||
           t.moods?.some((m) => m.name.toLowerCase().includes(q))
       );
     }
@@ -134,7 +135,12 @@ export function LibraryPage() {
             <CardTitle className="text-white">Треки ({filtered.length})</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-1">
+            {filtered.length === 0 ? (
+              <div className="py-12 text-center text-white/40">
+                {search ? 'Ничего не найдено по вашему запросу' : 'В библиотеке пока нет треков'}
+              </div>
+            ) : (
+              <div className="space-y-1">
               {filtered.map((track, i) => (
                 <motion.div
                   key={track.id}
@@ -146,7 +152,7 @@ export function LibraryPage() {
                   <div className="text-white/30 font-mono text-xs">{String(i + 1).padStart(2, '0')}</div>
                   <div className="min-w-0">
                     <div className="font-medium text-white truncate">{track.title}</div>
-                    <div className="text-xs text-white/50 truncate">{track.game.title}</div>
+                    <div className="text-xs text-white/50 truncate">{track.game?.title || track.title}</div>
                   </div>
                   <div className="hidden md:flex items-center gap-1">
                     {track.moods?.slice(0, 2).map((mood) => (
@@ -171,6 +177,7 @@ export function LibraryPage() {
                 </motion.div>
               ))}
             </div>
+            )}
           </CardContent>
         </Card>
 
@@ -245,4 +252,4 @@ export function LibraryPage() {
       </div>
     </div>
   );
-}
+});

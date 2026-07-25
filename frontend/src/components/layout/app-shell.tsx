@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from '@/components/navigation/sidebar';
 import { MobileNav } from '@/components/navigation/mobile-nav';
+import { SiteFooter } from '@/components/layout/site-footer';
 import { CassetteDeck } from '@/components/player/cassette-deck';
 import { Scanlines, Vignette } from '@/components/effects';
 import { X } from 'lucide-react';
@@ -191,6 +192,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       >
         {children}
       </main>
+
+      <div style={{ marginLeft: effectiveWidth }}>
+        <SiteFooter />
+      </div>
 
       <MobileNav />
       <CassetteDeck />

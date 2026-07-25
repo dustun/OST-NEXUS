@@ -5,10 +5,53 @@ import Link from 'next/link';
 import { Gamepad2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { games } from '@/data/mock';
+import { useGames } from '@/lib/hooks/use-catalog';
 import { routes } from '@/shared/config';
 
 export function FeaturedGamesSection() {
+  const { data: games, isLoading, error } = useGames();
+
+  if (isLoading) {
+    return (
+      <section className="py-10">
+        <div className="mx-auto max-w-[1600px] px-4">
+          <div className="section-header">
+            <div className="section-eyebrow">Каталог</div>
+            <h2 className="section-title">Избранные игры</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="card-panel animate-pulse">
+                <div className="aspect-video w-full rounded-t-xl bg-white/5" />
+                <div className="p-6">
+                  <div className="h-5 w-3/4 rounded bg-white/10" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !games?.length) {
+    return (
+      <section className="py-10">
+        <div className="mx-auto max-w-[1600px] px-4">
+          <div className="section-header">
+            <div className="section-eyebrow">Каталог</div>
+            <h2 className="section-title">Избранные игры</h2>
+          </div>
+          <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+            Игры не найдены
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const featuredGames = games.slice(0, 3);
+
   return (
     <section className="py-10">
       <div className="mx-auto max-w-[1600px] px-4">
@@ -23,7 +66,7 @@ export function FeaturedGamesSection() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {games.map((game, i) => (
+          {featuredGames.map((game, i) => (
             <motion.div
               key={game.id}
               initial={{ opacity: 0, y: 20 }}
@@ -44,7 +87,7 @@ export function FeaturedGamesSection() {
                   <CardContent>
                     <div className="flex items-center justify-between">
                       <div className="flex gap-2">
-                        {game.genres.slice(0, 2).map((genre) => (
+                        {(game.genres || []).slice(0, 2).map((genre) => (
                           <span key={genre} className="tag-genre badge text-[10px]">
                             {genre}
                           </span>

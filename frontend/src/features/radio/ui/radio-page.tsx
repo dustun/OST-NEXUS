@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { TrackSearchBar } from '@/components/search/track-search-bar';
 import { useCollections } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
 
-export function RadioPage() {
+export const RadioPage = React.memo(function RadioPage() {
   const { play, setQueue, setStation } = usePlayerStore();
   const { data: collections, isLoading, error } = useCollections();
 
@@ -40,6 +41,20 @@ export function RadioPage() {
     return (
       <div className="mx-auto max-w-[1600px] px-4 py-8">
         <h1 className="text-2xl text-white">Ошибка загрузки радиостанций</h1>
+      </div>
+    );
+  }
+
+  if (!radioCollections.length) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Прямой эфир</div>
+          <h1 className="section-title">Радиостанции</h1>
+        </div>
+        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+          Радиостанции не найдены
+        </div>
       </div>
     );
   }
@@ -111,4 +126,4 @@ export function RadioPage() {
       </div>
     </div>
   );
-}
+});

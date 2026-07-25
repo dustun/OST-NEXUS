@@ -9,7 +9,6 @@ import {
   Radio,
   Gamepad2,
   Music2,
-  Settings,
   Disc3,
   FolderOpen,
   ChevronLeft,
@@ -97,22 +96,6 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
             );
           })}
         </div>
-
-        {!isCollapsed && (
-          <div className="mt-6 pt-6 border-t border-white/5">
-            <div className="px-4 mb-3 text-[11px] font-bold text-white/30 uppercase tracking-wider">
-              Система
-            </div>
-            <Link
-              href="/admin"
-              onClick={onClose}
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium text-white/70 transition-all hover:bg-white/5 hover:text-white"
-            >
-              <Settings className="h-6 w-6" />
-              Админ-панель
-            </Link>
-          </div>
-        )}
       </nav>
 
       {!isCollapsed && (

@@ -20,7 +20,7 @@ final class GameResource extends JsonResource
             'description' => $this->description,
             'release_date' => $this->release_date,
             'cover_image_url' => $this->cover_image_url,
-            'status' => $this->status?->label(),
+            'status' => strtolower($this->status?->name ?? ''),
             'published_at' => $this->published_at,
         ];
     }

@@ -84,7 +84,7 @@ export default function ComposerPage() {
                       <span className="text-xs text-white/30 font-mono">{String(i + 1).padStart(2, '0')}</span>
                       <div>
                         <div className="text-sm font-medium text-white">{track.title}</div>
-                        <div className="text-xs text-white/50">{track.game.title}</div>
+                        <div className="text-xs text-white/50">{track.game?.title || track.title}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

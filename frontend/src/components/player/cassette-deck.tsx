@@ -18,17 +18,61 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { usePlayerStore } from '@/stores/player-store';
+import { youtubeProvider, soundcloudProvider, directProvider } from '@/lib/audio';
 import { Equalizer } from '@/components/ui/equalizer';
-import { Collection } from '@/types';
 
 function resolveValue(value: number | readonly number[]): number {
   if (typeof value === 'number') return value;
   return (value as unknown as number[])[0];
 }
 
+function renderEmbed(source: import('@/types').PlaybackSource | null) {
+  if (!source) return null;
+  if (source.provider === 'direct' && source.sourceUrl) {
+    return (
+      <audio
+        controls
+        autoPlay
+        src={source.sourceUrl}
+        className="h-8 w-full opacity-90"
+      />
+    );
+  }
+  const src =
+    source.provider === 'youtube' && source.externalId
+      ? youtubeProvider.getEmbedUrl({
+          provider: 'youtube',
+          externalId: source.externalId,
+          sourceUrl: source.sourceUrl,
+          isPrimary: source.isPrimary,
+          metadata: source.metadata,
+        })
+      : source.provider === 'soundcloud' && source.sourceUrl
+        ? soundcloudProvider.getEmbedUrl({
+            provider: 'soundcloud',
+            externalId: source.externalId,
+            sourceUrl: source.sourceUrl,
+            isPrimary: source.isPrimary,
+            metadata: source.metadata,
+          })
+        : null;
+
+  if (!src) return null;
+
+  return (
+    <iframe
+      src={src}
+      allow="autoplay; encrypted-media; fullscreen"
+      className="h-20 w-full rounded-lg border border-white/10"
+      allowFullScreen
+    />
+  );
+}
+
 export function CassetteDeck() {
   const {
     currentTrack,
+    currentSource,
     isPlaying,
     progress,
     duration,
@@ -81,9 +125,9 @@ export function CassetteDeck() {
                   <div className="truncate text-sm font-bold text-white">
                     {currentTrack.title}
                   </div>
-                  <div className="truncate text-xs text-white/50">
-                    {currentTrack.game.title}
-                  </div>
+                   <div className="truncate text-xs text-white/50">
+                     {currentTrack.game?.title || currentTrack.title}
+                   </div>
                   {station && (
                     <div className="mt-1 flex items-center gap-1">
                       <Radio className="h-3 w-3 text-[#8B5CF6]" />
@@ -192,6 +236,12 @@ export function CassetteDeck() {
                 </Button>
               </div>
             </div>
+
+             {currentSource && (
+               <div className="mt-3">
+                 {renderEmbed(currentSource)}
+               </div>
+             )}
           </div>
         </motion.div>
       )}

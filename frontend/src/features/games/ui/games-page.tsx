@@ -1,12 +1,13 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Gamepad2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGames } from '@/lib/hooks/use-catalog';
 
-export function GamesPage() {
+export const GamesPage = React.memo(function GamesPage() {
   const { data: games, isLoading, error } = useGames();
 
   if (isLoading) {
@@ -38,6 +39,20 @@ export function GamesPage() {
     );
   }
 
+  if (!games?.length) {
+    return (
+      <div className="mx-auto max-w-[1600px] px-4 py-8">
+        <div className="mb-8">
+          <div className="section-eyebrow">Каталог игровых миров</div>
+          <h1 className="section-title">Игры</h1>
+        </div>
+        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
+          Игры не найдены
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-8">
       <div className="mb-8">
@@ -46,7 +61,7 @@ export function GamesPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {games?.map((game, i) => (
+        {games.map((game, i) => (
           <motion.div
             key={game.id}
             initial={{ opacity: 0, y: 20 }}
@@ -75,4 +90,4 @@ export function GamesPage() {
       </div>
     </div>
   );
-}
+});

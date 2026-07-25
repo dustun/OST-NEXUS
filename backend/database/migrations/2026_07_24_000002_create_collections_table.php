@@ -43,7 +43,7 @@ return new class extends Migration {
         });
 
         Schema::create('user_favorites', function (Blueprint $table): void {
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('track_id')->constrained()->cascadeOnDelete();
             $table->timestampTz('added_at');
 
@@ -53,7 +53,7 @@ return new class extends Migration {
 
         Schema::create('user_queue_items', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('track_id')->constrained()->cascadeOnDelete();
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestampTz('added_at');
@@ -63,7 +63,7 @@ return new class extends Migration {
 
         Schema::create('user_play_history', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('track_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('play_count')->default(1);
             $table->timestampTz('last_played_at');
