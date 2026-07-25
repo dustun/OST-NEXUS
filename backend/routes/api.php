@@ -30,4 +30,5 @@ Route::prefix('v1')->group(function (): void {
 
     Route::get('/tracks', [TrackController::class, 'index'])->name('api.v1.tracks.index');
     Route::get('/tracks/{id}', [TrackController::class, 'show'])->name('api.v1.tracks.show');
+    Route::get('/tracks/{id}/play', [TrackController::class, 'play'])->name('api.v1.tracks.play');
 });
