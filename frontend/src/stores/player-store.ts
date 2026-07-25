@@ -13,6 +13,7 @@ interface PlayerStore {
   queueIndex: number;
   isShuffle: boolean;
   repeat: 'none' | 'all' | 'one';
+  favorites: string[];
   setIsPlaying: (playing: boolean) => void;
   setCurrentTrack: (track: Track | null) => void;
   setCurrentSource: (source: PlaybackSource | null) => void;
@@ -28,6 +29,7 @@ interface PlayerStore {
   setQueue: (tracks: Track[], startIndex?: number) => void;
   toggleShuffle: () => void;
   toggleRepeat: () => void;
+  toggleFavorite: (trackId: string) => void;
   close: () => void;
 }
 
@@ -43,6 +45,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   queueIndex: 0,
   isShuffle: false,
   repeat: 'none',
+  favorites: [],
 
   setIsPlaying: (playing) => set({ isPlaying: playing }),
   setCurrentTrack: (track) => set({ currentTrack: track }),
@@ -89,6 +92,12 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   setQueue: (tracks, startIndex = 0) => set({ queue: tracks, queueIndex: startIndex }),
   toggleShuffle: () => set((s) => ({ isShuffle: !s.isShuffle })),
   toggleRepeat: () => set((s) => ({ repeat: s.repeat === 'none' ? 'all' : s.repeat === 'all' ? 'one' : 'none' })),
+  toggleFavorite: (trackId) => set((s) => {
+    const favorites = s.favorites.includes(trackId)
+      ? s.favorites.filter((id) => id !== trackId)
+      : [...s.favorites, trackId];
+    return { favorites };
+  }),
   close: () => set({ currentTrack: null, currentSource: null, isPlaying: false, progress: 0, station: null }),
 }));
 
