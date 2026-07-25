@@ -87,7 +87,7 @@ export function FeaturedGamesSection() {
                   <CardContent>
                     <div className="flex items-center justify-between">
                       <div className="flex gap-2">
-                        {game.genres.slice(0, 2).map((genre) => (
+                        {(game.genres || []).slice(0, 2).map((genre) => (
                           <span key={genre} className="tag-genre badge text-[10px]">
                             {genre}
                           </span>
