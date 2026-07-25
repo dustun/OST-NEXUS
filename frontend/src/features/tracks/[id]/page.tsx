@@ -102,19 +102,19 @@ export default function TrackPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <Card className="card-panel border-white/10">
+          <Card className="card-panel border-white/10 pixel-border">
             <CardContent className="p-6">
               <div className="mb-4">
                 <div className="text-xs text-white/40 uppercase tracking-wider mb-2">Прослушивание</div>
                 {playData?.source && renderEmbed(playData.source)}
                 {!playData?.source && (
-                  <div className="rounded-xl border border-white/10 bg-gradient-to-br from-[#8B5CF6]/10 to-[#28F0FF]/5 p-8 text-center">
+                  <div className="rounded-lg border border-white/10 bg-gradient-to-br from-[#8B5CF6]/10 to-[#28F0FF]/5 p-8 text-center">
                     <Equalizer isPlaying={true} />
                   </div>
                 )}
               </div>
               <div className="flex items-center gap-4">
-                <Button onClick={handlePlay} className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90">
+                <Button onClick={handlePlay} className="h-12 w-12 rounded-full btn-primary flex items-center justify-center">
                   <Play className="h-5 w-5 ml-0.5" />
                 </Button>
                 <div>
@@ -127,32 +127,32 @@ export default function TrackPage() {
         </div>
 
         <div>
-          <Card className="card-panel border-white/10">
+          <Card className="card-panel border-white/10 pixel-border">
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Игра</div>
+                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">ИГРА</div>
                   <div className="text-sm text-white">{track.game?.title || track.title}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Длительность</div>
+                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">ДЛИТЕЛЬНОСТЬ</div>
                   <div className="text-sm text-white font-mono">
                     {Math.floor(track.durationSeconds / 60)}:{String(track.durationSeconds % 60).padStart(2, '0')}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Источник</div>
+                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">ИСТОЧНИК</div>
                   <div className="text-sm text-white">
                     {playData?.source.provider || 'Загрузка...'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Настроение</div>
+                  <div className="text-xs text-white/40 uppercase tracking-wider mb-1">НАСТРОЕНИЕ</div>
                   <div className="flex flex-wrap gap-2">
                     {track.moods?.map((mood) => (
                       <span
                         key={mood.id}
-                        className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/60"
+                        className="tag-mood badge text-[10px]"
                       >
                         {mood.name}
                       </span>
