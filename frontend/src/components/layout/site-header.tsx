@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Play, Radio, Library, Gamepad2, Disc } from 'lucide-react';
+import { Play, Radio, Library, Gamepad2 } from 'lucide-react';
+import { UrlPlayDialog } from '@/components/player/url-play-dialog';
 
 const navItems = [
   { href: '/', label: 'Главная', icon: Play },
@@ -38,6 +39,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <UrlPlayDialog />
         </div>
       </div>
     </header>
