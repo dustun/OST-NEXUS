@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
-import { Play, Disc } from 'lucide-react';
+import { Play, Disc, Shuffle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useGame, useTracks } from '@/lib/hooks/use-catalog';
@@ -14,7 +14,7 @@ export const GamePage = React.memo(function GamePage() {
   const slug = params.slug as string;
   const { data: game, isLoading: gameLoading, error: gameError } = useGame(slug);
   const { data: tracks } = useTracks({ gameId: game?.id });
-  const { play, setQueue } = usePlayerStore();
+  const { play, setQueue, toggleShuffle, isShuffle } = usePlayerStore();
 
   if (gameLoading) {
     return (
@@ -66,10 +66,23 @@ export const GamePage = React.memo(function GamePage() {
                 <div className="flex items-center gap-4 text-sm text-white/50">
                   <span>{game.releaseDate}</span>
                 </div>
-                <Button onClick={handlePlayGame} className="btn-primary">
-                  <Play className="h-4 w-4 mr-2" />
-                  Воспроизвести все
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      handlePlayGame();
+                      toggleShuffle();
+                    }}
+                    className={`h-8 w-8 ${isShuffle ? 'text-[#8B5CF6]' : 'text-white/50'}`}
+                  >
+                    <Shuffle className="h-4 w-4" />
+                  </Button>
+                  <Button onClick={handlePlayGame} className="btn-primary">
+                    <Play className="h-4 w-4 mr-2" />
+                    Воспроизвести все
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

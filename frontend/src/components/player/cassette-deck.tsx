@@ -14,12 +14,14 @@ import {
   Repeat1,
   ListMusic,
   Heart,
+  ChevronDown,
 } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { usePlayerStore } from '@/stores/player-store';
 import { youtubeProvider, soundcloudProvider, directProvider } from '@/lib/audio';
 import { Equalizer } from '@/components/ui/equalizer';
+import { useState } from 'react';
 
 function resolveValue(value: number | readonly number[]): number {
   if (typeof value === 'number') return value;
@@ -80,6 +82,8 @@ export function CassetteDeck() {
     station,
     isShuffle,
     repeat,
+    queue,
+    queueIndex,
     togglePlay,
     next,
     prev,
@@ -87,7 +91,9 @@ export function CassetteDeck() {
     close,
     toggleShuffle,
     toggleRepeat,
+    toggleFavorite,
   } = usePlayerStore();
+  const [showQueue, setShowQueue] = useState(false);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -210,11 +216,22 @@ export function CassetteDeck() {
               </div>
 
               <div className="flex flex-1 items-center justify-end gap-2">
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-white/50 hover:text-[#FF4FD8]">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => toggleFavorite(currentTrack?.id || '')}
+                  className={`h-8 w-8 ${currentTrack ? 'text-white/50 hover:text-[#FF4FD8]' : 'text-white/30 cursor-not-allowed'}`}
+                  disabled={!currentTrack}
+                >
                   <Heart className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-white/50 hover:text-white">
-                  <ListMusic className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowQueue(!showQueue)}
+                  className="h-8 w-8 text-white/50 hover:text-white"
+                >
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showQueue ? 'rotate-180' : ''}`} />
                 </Button>
                 <div className="flex items-center gap-2">
                   <Volume2 className="h-4 w-4 text-white/50" />
@@ -235,6 +252,28 @@ export function CassetteDeck() {
                   <X className="h-4 w-4" />
                 </Button>
               </div>
+
+              {showQueue && queue.length > 0 && (
+                <div className="mt-3 border-t border-white/10 pt-2">
+                  <div className="text-xs text-white/40 mb-2">Очередь ({queue.length})</div>
+                  <div className="space-y-1 max-h-48 overflow-y-auto">
+                    {queue.map((track, i) => (
+                      <div
+                        key={track.id}
+                        className={`flex items-center gap-2 p-2 rounded text-xs ${
+                          i === queueIndex ? 'bg-[#8B5CF6]/20' : 'hover:bg-white/5'
+                        }`}
+                      >
+                        <span className="text-white/40 font-mono">{i + 1}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-white truncate">{track.title}</div>
+                          <div className="text-white/40 text-[10px]">{track.game?.title || track.title}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
              {currentSource && (

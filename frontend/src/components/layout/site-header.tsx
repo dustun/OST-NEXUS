@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Play, Radio, Library, Gamepad2, Disc } from 'lucide-react';
+import { Play, Radio, Library, Gamepad2 } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Главная', icon: Play },
