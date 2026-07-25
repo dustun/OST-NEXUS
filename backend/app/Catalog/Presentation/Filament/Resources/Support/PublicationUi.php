@@ -84,15 +84,23 @@ final class PublicationUi
         ];
     }
 
-    public static function label(PublicationStatus | int $status): string
+    public static function label(PublicationStatus | int | null $status): string
     {
+        if ($status === null) {
+            return '-';
+        }
+
         $status = is_int($status) ? PublicationStatus::from($status) : $status;
 
         return self::options()[$status->value];
     }
 
-    public static function color(PublicationStatus | int $status): string
+    public static function color(PublicationStatus | int | null $status): string
     {
+        if ($status === null) {
+            return 'gray';
+        }
+
         $status = is_int($status) ? PublicationStatus::from($status) : $status;
 
         return match ($status) {
