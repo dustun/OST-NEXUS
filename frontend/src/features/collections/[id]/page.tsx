@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
-import { Play, Clock } from 'lucide-react';
+import { Play, Clock, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCollections } from '@/lib/hooks/use-catalog';
 import { usePlayerStore } from '@/stores/player-store';
@@ -11,7 +11,7 @@ export default function CollectionPage() {
   const params = useParams();
   const id = params.id as string;
   const { data: collections } = useCollections();
-  const { play, setQueue, setStation } = usePlayerStore();
+  const { play, setQueue, setStation, toggleShuffle, isShuffle } = usePlayerStore();
 
   const collection = collections?.find((c) => c.id === id);
 
@@ -62,6 +62,19 @@ export default function CollectionPage() {
         </div>
 
         <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                handlePlayCollection();
+                toggleShuffle();
+              }}
+              className={`h-8 w-8 ${isShuffle ? 'text-[#8B5CF6]' : 'text-white/50'}`}
+            >
+              <Shuffle className="h-4 w-4" />
+            </Button>
+          </div>
           <Button onClick={handlePlayCollection} className="btn-primary flex items-center gap-2">
             <Play className="h-4 w-4" />
             {collection.isLive ? 'Слушать эфир' : 'Воспроизвести'}
