@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AppShell } from "@/components/layout/app-shell";
 import { TooltipProvider } from "@/components/ui/tooltip";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "OST NEXUS - игровые миры продолжают звучать",
@@ -18,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className="h-full antialiased">
-      <body className={`${inter.className} min-h-full`}>
+    <html lang="ru" className="h-full">
+      <body className="min-h-full bg-[#000] text-[#00ff00]">
         <QueryProvider>
           <TooltipProvider>
             <AppShell>

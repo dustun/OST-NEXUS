@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -11,11 +10,9 @@ import {
   Music2,
   Disc3,
   FolderOpen,
-  ChevronLeft,
-  ChevronRight,
+  X,
 } from 'lucide-react';
 import { routes } from '@/shared/config';
-import { UrlPlayDialog } from '@/components/player/url-play-dialog';
 
 const navItems = [
   { href: routes.home, label: 'Главная', icon: Play },
@@ -37,37 +34,26 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
   const pathname = usePathname();
   const isCollapsed = width <= 80;
 
-  const handleMouseEnter = () => {
-    if (isCollapsed && onExpand) {
-      onExpand();
-    }
-  };
-
   return (
     <aside
-      onMouseEnter={handleMouseEnter}
-      className="fixed left-0 top-0 z-40 h-screen flex-col border-r border-white/10 bg-[#0B0F1A]/95 backdrop-blur-xl flex"
+      className="flex flex-col border-r-2 border-[#333] bg-[#000]"
       style={{ width }}
     >
-      <div className="flex h-16 items-center justify-between px-4 border-b border-white/5">
+      <div className="flex h-16 items-center justify-between px-4 border-b-2 border-[#333]">
         <Link href={routes.home} className="flex items-center gap-3">
-          <motion.div
-            className="h-10 w-10 flex-shrink-0 rounded-lg border-2 border-[#8B5CF6] bg-gradient-to-br from-[#8B5CF6] to-[#28F0FF] flex items-center justify-center"
-            animate={{ boxShadow: ['0 0 12px #8B5CF6', '0 0 30px #8B5CF6', '0 0 12px #8B5CF6'] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <span className="text-white font-bold text-sm pixel-border">NX</span>
-          </motion.div>
+          <div className="h-10 w-10 flex-shrink-0 border-2 border-[#00ff00] bg-[#000] flex items-center justify-center">
+            <span className="text-[#00ff00] font-bold text-sm pixel-border">NX</span>
+          </div>
           {!isCollapsed && (
-            <span className="font-bold text-lg tracking-wider text-white">OST NEXUS</span>
+            <span className="font-bold text-lg tracking-wider text-[#00ff00]">OST NEXUS</span>
           )}
         </Link>
         {onClose && !isCollapsed && (
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-white/60 hover:bg-white/5 hover:text-white transition-colors pixel-border"
+            className="flex h-9 w-9 items-center justify-center border-2 border-[#333] text-[#00ff00] hover:bg-[#00ff00] hover:text-[#000] transition-all active:translate-x-1 active:translate-y-1"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <X className="h-5 w-5" />
           </button>
         )}
       </div>
@@ -81,17 +67,17 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 rounded-lg transition-all ${
+                className={`flex items-center gap-3 transition-all ${
                   isCollapsed ? 'px-3 py-3 justify-center' : 'px-4 py-3'
                 } ${
                   isActive
-                    ? 'bg-[#8B5CF6]/20 text-[#A78BFA] pixel-border'
-                    : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    ? 'border-l-4 border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00]'
+                    : 'border-l-4 border-transparent text-[#888] hover:bg-[#00ff00]/5 hover:text-[#00ff00]'
                 }`}
               >
                 <item.icon className={`h-5 w-5 ${isCollapsed ? 'mx-auto' : ''}`} />
                 {!isCollapsed && (
-                  <span className="text-[15px] font-medium tracking-wider">{item.label}</span>
+                  <span className="text-[13px] font-medium tracking-wider">{item.label}</span>
                 )}
               </Link>
             );
@@ -100,34 +86,30 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
       </nav>
 
       {!isCollapsed && (
-        <div className="border-t border-white/5 p-4">
-          <div className="rounded-xl border border-white/10 bg-gradient-to-br from-[#8B5CF6]/10 to-[#28F0FF]/5 p-4">
-            <div className="text-xs font-bold text-white/80 mb-1">NEXUS FM</div>
-            <div className="text-[10px] text-white/50 mb-3">Сейчас в эфире</div>
+        <div className="border-t-2 border-[#333] p-4">
+          <div className="border-2 border-[#333] p-4">
+            <div className="text-xs font-bold text-[#00ff00] mb-1">NEXUS FM</div>
+            <div className="text-[10px] text-[#666] mb-3">Сейчас в эфире</div>
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#8B5CF6] to-[#28F0FF] flex items-center justify-center">
-                <Radio className="h-4 w-4 text-white" />
+              <div className="h-8 w-8 border-2 border-[#00ff00] bg-[#000] flex items-center justify-center">
+                <Radio className="h-4 w-4 text-[#00ff00]" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-medium text-white truncate">Пробуждение</div>
-                <div className="text-[10px] text-white/50">Nexus Ensemble</div>
+                <div className="text-xs font-medium text-[#00ff00]">Пробуждение</div>
+                <div className="text-[10px] text-[#666]">Nexus Ensemble</div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <div className="border-t border-white/5 p-3">
-        <UrlPlayDialog />
-      </div>
-
       {isCollapsed && onExpand && (
-        <div className="border-t border-white/5 p-3 flex justify-center">
+        <div className="border-t-2 border-[#333] p-3 flex justify-center">
           <button
             onClick={onExpand}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+            className="flex h-9 w-9 items-center justify-center border-2 border-[#333] text-[#00ff00] hover:bg-[#00ff00] hover:text-[#000] transition-all"
           >
-            <ChevronRight className="h-6 w-6" />
+            <span className="text-lg leading-none">›</span>
           </button>
         </div>
       )}
