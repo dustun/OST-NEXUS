@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { routes } from '@/shared/config';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const retroGames = [
   {
@@ -68,8 +70,8 @@ const retroTracks = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col bg-[#000] text-[#00ff00] crt-vignette">
-      <div className="scanlines"></div>
+    <main id="main-content" className="min-h-screen flex flex-col crt-vignette" style={{ background: 'var(--color-bg)', color: 'var(--color-fg)' }}>
+      <div className="scanlines" aria-hidden="true"></div>
       
       {/* Hero Section */}
       <section className="relative py-16 px-4 border-b-4 border-[#00ff00]">
@@ -86,16 +88,10 @@ export default function Home() {
                 Интерактивная энциклопедия игровых саундтреков и музыкальных миров в стиле ретро.
               </p>
               <div className="flex gap-4">
-                <Link 
-                  href={routes.library} 
-                  className="btn-main"
-                >
+                <Link href={routes.library} className={cn(buttonVariants({ variant: 'default' }))}>
                   Перейти в библиотеку
                 </Link>
-                <Link 
-                  href={routes.radio} 
-                  className="btn-pixel"
-                >
+                <Link href={routes.radio} className={cn(buttonVariants({ variant: 'ghost' }))}>
                   Слушать радио
                 </Link>
               </div>
@@ -143,7 +139,7 @@ export default function Home() {
                   </div>
                   <Link 
                     href={routes.game(game.slug)} 
-                    className="btn-pixel w-full text-center text-[13px] py-2 block"
+                    className={cn(buttonVariants({ variant: 'ghost' }), 'w-full text-center text-[13px] py-2 block')}
                   >
                     Подробнее
                   </Link>
@@ -179,7 +175,7 @@ export default function Home() {
                     <span>{track.duration}</span>
                   </div>
                 </div>
-                <button className="btn-main ml-4 text-[13px] py-2">
+                <button className={cn(buttonVariants({ variant: 'default' }), 'ml-4 text-[13px] py-2')} aria-label={`Воспроизвести ${track.title}`}>
                   ▶ Play
                 </button>
               </div>
@@ -189,7 +185,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link 
               href={routes.tracks} 
-              className="btn-pixel"
+              className={cn(buttonVariants({ variant: 'ghost' }))}
             >
               Показать все треки
             </Link>
