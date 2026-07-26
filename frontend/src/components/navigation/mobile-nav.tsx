@@ -1,49 +1,56 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Play, Library, Radio, Gamepad2, Music2 } from 'lucide-react';
 import { routes } from '@/shared/config';
 
 const navItems = [
-  { href: routes.home, label: 'Главная', icon: Play },
-  { href: routes.library, label: 'Библиотека', icon: Library },
-  { href: routes.games, label: 'Игры', icon: Gamepad2 },
-  { href: routes.tracks, label: 'Треки', icon: Music2 },
-  { href: routes.radio, label: 'Радио', icon: Radio },
+  { href: routes.home, label: 'Home' },
+  { href: routes.library, label: 'Library' },
+  { href: routes.games, label: 'Games' },
+  { href: routes.tracks, label: 'Tracks' },
+  { href: routes.radio, label: 'Radio' },
 ];
 
-export function MobileNav() {
+interface MobileNavProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
+}
+
+export function MobileNav({ isOpen, onClose, onOpen }: MobileNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav role="navigation" aria-label="Мобильная навигация" className="fixed bottom-0 left-0 right-0 z-40 border-t" style={{ borderColor: 'var(--color-border)', background: 'rgba(11,15,26,0.95)', backdropFilter: 'blur(6px)' }}>
-      <div className="flex items-center justify-around">
+    <nav
+      role="navigation"
+      aria-label="Мобильная навигация"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t-2 border-[var(--color-border)] bg-[var(--color-bg)]"
+    >
+      <div className="flex items-center justify-around py-2">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const active = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center gap-1 py-2 px-3 transition-colors ${
-                isActive ? 'text-[var(--color-accent)]' : 'text-[var(--color-muted)]'
+              className={`flex flex-col items-center gap-1 px-3 py-1 text-[10px] tracking-wider no-underline transition-colors ${
+                active ? 'text-[var(--color-accent)]' : 'text-[var(--color-muted)]'
               }`}
-              aria-current={isActive ? 'page' : undefined}
             >
-              <item.icon className="h-5 w-5" aria-hidden="true" />
-              <span className="text-[10px] font-medium">{item.label}</span>
-              {isActive && (
-                <motion.div
-                  layoutId="mobile-nav-active"
-                  className="h-0.5 w-4 rounded-full"
-                  style={{ background: 'var(--color-accent)' }}
-                  aria-hidden="true"
-                />
-              )}
+              <span className="text-sm">{active ? '\u25B6' : '\u25CB'}</span>
+              <span>{item.label}</span>
             </Link>
           );
         })}
+        <button
+          onClick={onOpen}
+          className="flex flex-col items-center gap-1 px-3 py-1 text-[10px] tracking-wider text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors"
+          aria-label="Открыть меню"
+        >
+          <span className="text-sm">&#9776;</span>
+          <span>Menu</span>
+        </button>
       </div>
     </nav>
   );
