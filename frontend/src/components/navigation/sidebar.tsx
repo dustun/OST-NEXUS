@@ -36,8 +36,11 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
 
   return (
     <aside
-      className="flex flex-col border-r-2 border-[#333] bg-[#000]"
-      style={{ width }}
+      role="navigation"
+      aria-label="Основная навигация"
+      aria-hidden={isCollapsed}
+      className="flex flex-col border-r-2"
+      style={{ width, borderColor: 'var(--color-border)', background: 'var(--color-bg)' }}
     >
       <div className="flex h-16 items-center justify-between px-4 border-b-2 border-[#333]">
         <Link href={routes.home} className="flex items-center gap-3">
@@ -71,11 +74,12 @@ export function Sidebar({ onClose, onExpand, width = 256 }: SidebarProps) {
                   isCollapsed ? 'px-3 py-3 justify-center' : 'px-4 py-3'
                 } ${
                   isActive
-                    ? 'border-l-4 border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00]'
-                    : 'border-l-4 border-transparent text-[#888] hover:bg-[#00ff00]/5 hover:text-[#00ff00]'
+                    ? 'border-l-4 border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
+                    : 'border-l-4 border-transparent text-[var(--color-muted)] hover:bg-[var(--color-accent)]/5 hover:text-[var(--color-accent)]'
                 }`}
+                aria-current={isActive ? 'page' : undefined}
               >
-                <item.icon className={`h-5 w-5 ${isCollapsed ? 'mx-auto' : ''}`} />
+                <item.icon className={`h-5 w-5 ${isCollapsed ? 'mx-auto' : ''}`} aria-hidden="true" />
                 {!isCollapsed && (
                   <span className="text-[13px] font-medium tracking-wider">{item.label}</span>
                 )}

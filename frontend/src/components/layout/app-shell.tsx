@@ -162,6 +162,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             variant="ghost"
             size="icon"
             onClick={expandSidebar}
+            aria-label={collapsed ? 'Развернуть боковую панель' : 'Свернуть боковую панель'}
+            aria-expanded={!collapsed}
             className="hidden lg:flex fixed top-4 left-4 z-50 h-9 w-9 text-white/70 hover:text-white"
           >
             <span className="text-lg leading-none">›</span>

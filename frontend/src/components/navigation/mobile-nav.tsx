@@ -18,7 +18,7 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/5 bg-[#0B0F1A]/95 backdrop-blur-xl lg:hidden">
+    <nav role="navigation" aria-label="Мобильная навигация" className="fixed bottom-0 left-0 right-0 z-40 border-t" style={{ borderColor: 'var(--color-border)', background: 'rgba(11,15,26,0.95)', backdropFilter: 'blur(6px)' }}>
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -27,15 +27,18 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center gap-1 py-2 px-3 transition-colors ${
-                isActive ? 'text-[#A78BFA]' : 'text-white/50'
+                isActive ? 'text-[var(--color-accent)]' : 'text-[var(--color-muted)]'
               }`}
+              aria-current={isActive ? 'page' : undefined}
             >
-              <item.icon className="h-5 w-5" />
+              <item.icon className="h-5 w-5" aria-hidden="true" />
               <span className="text-[10px] font-medium">{item.label}</span>
               {isActive && (
                 <motion.div
                   layoutId="mobile-nav-active"
-                  className="h-0.5 w-4 rounded-full bg-[#8B5CF6]"
+                  className="h-0.5 w-4 rounded-full"
+                  style={{ background: 'var(--color-accent)' }}
+                  aria-hidden="true"
                 />
               )}
             </Link>
