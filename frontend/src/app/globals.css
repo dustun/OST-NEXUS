@@ -1,22 +1,51 @@
+/*
+  OST NEXUS — Global theme tokens
+
+  Purpose:
+  - Centralize color, spacing and typographic tokens for the retro/pixel UI.
+  - Keep variables semantic and small in number so they are easy to override.
+  - Document tokens here so designers/developers know where to adjust theme.
+
+  Accessibility notes:
+  - All animations and decorative effects respect prefers-reduced-motion.
+  - Colors chosen for high contrast on dark backgrounds; review contrast where needed.
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 :root {
-  --color-bg: #000000;
-  --color-fg: #00ff00;
-  --color-muted: #444444;
-  --color-accent: #00ff00;
-  --color-accent-hover: #00cc00;
-  --color-accent-foreground: #000000;
-  --color-border: #333333;
-  --color-card-bg: #111111;
-  --color-card-border: #333333;
-  --color-input-bg: #111111;
-  --color-input-border: #333333;
-  --color-input-focus: #00ff00;
-  --color-surface: #0a0a0a;
-  --color-surface-hover: #1a1a1a;
+  /* Colors */
+  --color-bg: #000000;               /* page background */
+  --color-fg: #00ff00;               /* main foreground (text) */
+  --color-muted: #888888;            /* muted / secondary text */
+  --color-accent: #00ff00;           /* primary accent */
+  --color-accent-hover: #00cc00;     /* accent on hover */
+  --color-accent-foreground: #000000;/* text on accent backgrounds */
+  --color-border: #333333;          /* generic border */
+  --color-card-bg: #0f0f0f;         /* card surface */
+  --color-card-border: #333333;     /* card border */
+  --color-input-bg: #111111;        /* input background */
+  --color-input-border: #333333;    /* input border */
+  --color-input-focus: #00ff00;     /* input focus */
+  --color-surface: #0a0a0a;         /* hover surface */
+  --color-surface-hover: #1a1a1a;   /* surface hover */
+
+  /* Spacing scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+
+  /* Layout */
+  --container-max: 1200px;
+
+  /* Typography */
   --font-primary: 'Press Start 2P', cursive;
+  --base-font-size: 16px; /* fallback */
 }
+
+/* Responsive base font size for better scaling across screens */
+html { font-size: clamp(14px, 1.2vw + 12px, 18px); }
 
 .dark {
   --color-bg: #000000;
@@ -59,14 +88,51 @@ body {
   -moz-osx-font-smoothing: auto;
 }
 
+/* Screen-reader helper */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
 ::selection {
   background: rgba(0, 255, 0, 0.35);
   color: #000;
 }
 
+/* Scrollbar tuned for retro theme */
 *::-webkit-scrollbar {
   width: 12px;
   height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border: 2px solid #111;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  border: 2px solid #000;
+  border-radius: 0;
+}
+
+/* Focus-visible outline for keyboard navigation */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scanlines { opacity: 0.02 !important; }
+  .retro-grid { opacity: 0.03 !important; }
+  .active-glow { animation: none !important; }
 }
 
 *::-webkit-scrollbar-track {
