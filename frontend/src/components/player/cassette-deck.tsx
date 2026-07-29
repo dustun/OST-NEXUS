@@ -152,6 +152,8 @@ export function CassetteDeck() {
                     size="icon"
                     onClick={toggleShuffle}
                     className={`h-8 w-8 ${isShuffle ? 'text-[#8B5CF6]' : 'text-white/50'}`}
+                    aria-label="Переключить режим случайного воспроизведения"
+                    aria-pressed={isShuffle}
                   >
                     <Shuffle className="h-4 w-4" />
                   </Button>
@@ -160,6 +162,7 @@ export function CassetteDeck() {
                     size="icon"
                     onClick={prev}
                     className="h-8 w-8 text-white/70 hover:text-white"
+                    aria-label="Предыдущий трек"
                   >
                     <SkipBack className="h-4 w-4" />
                   </Button>
@@ -167,6 +170,8 @@ export function CassetteDeck() {
                     onClick={togglePlay}
                     className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90"
                     size="icon"
+                    aria-label={isPlaying ? 'Приостановить воспроизведение' : 'Воспроизвести'}
+                    aria-pressed={isPlaying}
                   >
                     {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
                   </Button>
@@ -175,6 +180,7 @@ export function CassetteDeck() {
                     size="icon"
                     onClick={next}
                     className="h-8 w-8 text-white/70 hover:text-white"
+                    aria-label="Следующий трек"
                   >
                     <SkipForward className="h-4 w-4" />
                   </Button>
@@ -183,6 +189,8 @@ export function CassetteDeck() {
                     size="icon"
                     onClick={toggleRepeat}
                     className={`h-8 w-8 ${repeat !== 'none' ? 'text-[#8B5CF6]' : 'text-white/50'}`}
+                    aria-label="Переключить режим повтора"
+                    aria-pressed={repeat !== 'none'}
                   >
                     {repeat === 'one' ? <Repeat1 className="h-4 w-4" /> : <Repeat className="h-4 w-4" />}
                   </Button>
@@ -222,6 +230,8 @@ export function CassetteDeck() {
                   onClick={() => toggleFavorite(currentTrack?.id || '')}
                   className={`h-8 w-8 ${currentTrack ? 'text-white/50 hover:text-[#FF4FD8]' : 'text-white/30 cursor-not-allowed'}`}
                   disabled={!currentTrack}
+                  aria-label={currentTrack ? 'Добавить в избранное' : 'Нет трека для добавления в избранное'}
+                  aria-pressed={false}
                 >
                   <Heart className="h-4 w-4" />
                 </Button>
@@ -230,6 +240,9 @@ export function CassetteDeck() {
                   size="icon"
                   onClick={() => setShowQueue(!showQueue)}
                   className="h-8 w-8 text-white/50 hover:text-white"
+                  aria-expanded={showQueue}
+                  aria-controls="player-queue"
+                  aria-label="Показать/скрыть очередь"
                 >
                   <ChevronDown className={`h-4 w-4 transition-transform ${showQueue ? 'rotate-180' : ''}`} />
                 </Button>
@@ -254,22 +267,24 @@ export function CassetteDeck() {
               </div>
 
               {showQueue && queue.length > 0 && (
-                <div className="mt-3 border-t border-white/10 pt-2">
+                <div id="player-queue" role="region" aria-label="Очередь плеера" className="mt-3 border-t border-white/10 pt-2">
                   <div className="text-xs text-white/40 mb-2">Очередь ({queue.length})</div>
                   <div className="space-y-1 max-h-48 overflow-y-auto">
                     {queue.map((track, i) => (
-                      <div
+                      <button
                         key={track.id}
-                        className={`flex items-center gap-2 p-2 rounded text-xs ${
+                        onClick={() => { usePlayerStore.setState({ queueIndex: i }); usePlayerStore.getState().play(track); }}
+                        className={`w-full text-left flex items-center gap-2 p-2 rounded text-xs ${
                           i === queueIndex ? 'bg-[#8B5CF6]/20' : 'hover:bg-white/5'
                         }`}
+                        aria-current={i === queueIndex ? 'true' : undefined}
                       >
                         <span className="text-white/40 font-mono">{i + 1}</span>
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-white truncate">{track.title}</div>
                           <div className="text-white/40 text-[10px]">{track.game?.title || track.title}</div>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>

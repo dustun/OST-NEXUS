@@ -1,91 +1,59 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Disc } from 'lucide-react';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
-import { useComposers } from '@/lib/hooks/use-catalog';
-import { routes } from '@/shared/config';
+import { Music2 } from 'lucide-react';
+import { useGames } from '@/lib/hooks/use-catalog';
 
-export const ComposersPage = React.memo(function ComposersPage() {
-  const { data: composers, isLoading, error } = useComposers();
+export const ComposersPage = () => {
+  const { data: games } = useGames();
 
-  if (isLoading) {
-    return (
-      <div className="mx-auto max-w-[1600px] px-4 py-8">
-        <div className="mb-8">
-          <div className="section-eyebrow">Создатели музыки</div>
-          <h1 className="section-title">Композиторы</h1>
+  // Collect unique composers from games
+  const composers = React.useMemo(() => {
+    const map = new Map<string, { id: string; name: string; count: number }>();
+    games?.forEach((game) => {
+      game.composers?.forEach((c) => {
+        const name = c.name;
+        const existing = map.get(name);
+        if (existing) {
+          existing.count++;
+        } else {
+          map.set(name, { id: name, name, count: 1 });
+        }
+      });
+    });
+    return Array.from(map.values()).sort((a, b) => b.count - a.count);
+  }, [games]);
+
+  return (
+    <div className="mx-auto max-w-[var(--container-max)] px-4 py-8">
+      <p className="text-[var(--color-accent)] text-xs tracking-widest mb-2 uppercase">Каталог</p>
+      <h1 className="text-2xl font-bold text-[var(--color-fg)] mb-8">Композиторы</h1>
+
+      {composers.length === 0 ? (
+        <div className="border-2 border-dashed border-[var(--color-card-border)] p-12 text-center text-[var(--color-muted)]">
+          Данные о композиторах пока не загружены
         </div>
+      ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="card-panel animate-pulse">
-              <div className="p-6">
-                <div className="h-5 w-3/4 rounded bg-white/10" />
+          {composers.map((composer) => (
+            <div
+              key={composer.id}
+              className="border-2 border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4 hover:border-[var(--color-accent)] transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-10 w-10 border-2 border-[var(--color-border)] flex items-center justify-center text-[var(--color-accent)]">
+                  <Music2 className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-[var(--color-fg)] font-bold text-sm">{composer.name}</h3>
+                  <p className="text-[var(--color-muted)] text-xs">{composer.count} {composer.count === 1 ? 'трек' : 'трека'}</p>
+                </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="mx-auto max-w-[1600px] px-4 py-8">
-        <h1 className="text-2xl text-white">Ошибка загрузки композиторов</h1>
-      </div>
-    );
-  }
-
-  if (!composers?.length) {
-    return (
-      <div className="mx-auto max-w-[1600px] px-4 py-8">
-        <div className="mb-8">
-          <div className="section-eyebrow">Создатели музыки</div>
-          <h1 className="section-title">Композиторы</h1>
-        </div>
-        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center text-white/40">
-          Композиторы не найдены
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mx-auto max-w-[1600px] px-4 py-8">
-      <div className="mb-8">
-        <div className="section-eyebrow">Создатели музыки</div>
-        <h1 className="section-title">Композиторы</h1>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {composers.map((composer, i) => (
-          <motion.div
-            key={composer.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <Link href={routes.composer(composer.id)}>
-              <Card className="card-panel group cursor-pointer border-white/10">
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className="h-16 w-16 flex-shrink-0 rounded-full border-2 border-[#8B5CF6] bg-gradient-to-br from-[#8B5CF6]/20 to-[#28F0FF]/20 flex items-center justify-center">
-                    <Disc className="h-8 w-8 text-[#A78BFA]" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-bold text-white group-hover:text-[#A78BFA] transition-colors">
-                      {composer.name}
-                    </CardTitle>
-                    <p className="mt-1 text-sm text-white/60 line-clamp-2">{composer.bio}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-        ))}
-      </div>
+      )}
     </div>
   );
-});
+};
